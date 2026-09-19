@@ -9,6 +9,10 @@ const screenshotPath =
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
 await page.goto(origin, { waitUntil: "networkidle" });
+const lessonNav = page.getByTestId("nav-lesson");
+if (await lessonNav.count()) {
+  await lessonNav.click();
+}
 
 const title = await page.locator("h1").innerText();
 if (expectedTitle && title !== expectedTitle) {
