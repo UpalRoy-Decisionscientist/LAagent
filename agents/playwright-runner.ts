@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { CollaborationBasin } from "../shared/basin.ts";
 import { DEFAULT_CAPTURE_PLAN } from "../shared/capture-plan.ts";
+import type { VisualAsset } from "../shared/types.ts";
 import { AwsConsoleVisualRecorder } from "../scripts/playwright-recorder.ts";
 
 export { DEFAULT_CAPTURE_PLAN };
@@ -19,7 +20,7 @@ export async function runPlaywrightAgent(
   });
 
   try {
-    const assets = [];
+    const assets: VisualAsset[] = [];
     for (const step of DEFAULT_CAPTURE_PLAN) {
       const captured = await recorder.recordStep({
         stepIndex: step.index,

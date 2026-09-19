@@ -6,12 +6,12 @@
   "description": "Multi-agent AWS Academy course builder: ingest, capture, audit, compose, and release.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
     "test": "vitest run",
     "pipeline": "tsx scripts/run-pipeline.ts",
     "capture": "tsx scripts/playwright-recorder.ts",
-    "typecheck": "tsc -b --pretty false"
+    "typecheck": "tsc -p tsconfig.app.json --pretty false --noEmit && tsc -p tsconfig.node.json --pretty false --noEmit"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
