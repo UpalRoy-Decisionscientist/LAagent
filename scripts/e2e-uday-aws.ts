@@ -1,8 +1,9 @@
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { runOrchestrator } from "../agents/orchestrator.ts";
 import { startMockConsoleServer } from "./mock-console/server.ts";
+import { localBin, spawnManaged, stopManaged, waitForHttp } from "../shared/process.ts";
 
 const SOURCE =
   process.env.UDAY_AWS_PATH ??
@@ -12,12 +13,12 @@ const SOURCE =
 const MODULE_ID = "uday-aws-iam-s3-lambda";
 const CHAPTERS = (process.env.UDAY_CHAPTERS ?? "01,02,03,04,05,08").split(",");
 const PORT = Number(process.env.E2E_PORT ?? "4180");
-
-function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const PREVIEW_PORT = Number(process.env.PREVIEW_PORT ?? "4174");
+const PREVIEW_URL = `http://127.0.0.1:${PREVIEW_PORT}`;
 
 const server = await startMockConsoleServer(PORT);
+let preview: ReturnType<typeof spawnManaged> | undefined;
+
 try {
   const basin = await runOrchestrator({
     sourcePath: SOURCE,
@@ -64,39 +65,29 @@ try {
   fs.writeFileSync(path.join(reportDir, "uday-aws-e2e.json"), JSON.stringify(report, null, 2));
 
   execFileSync("npm", ["run", "build"], { stdio: "inherit" });
+  preview = spawnManaged(localBin("vite"), [
+    "preview",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    String(PREVIEW_PORT),
+    "--strictPort",
+  ]);
+  preview.stdout?.on("data", (chunk) => process.stdout.write(chunk));
+  preview.stderr?.on("data", (chunk) => process.stderr.write(chunk));
+  await waitForHttp(PREVIEW_URL, 25_000);
 
-  const preview = spawn("npx", ["vite", "preview", "--host", "127.0.0.1", "--port", "4174"], {
-    stdio: "pipe",
-  });
-  await wait(1500);
-  const verify = spawn("npx", ["tsx", "scripts/verify-lesson-ui.ts"], {
+  execFileSync(localBin("tsx"), ["scripts/verify-lesson-ui.ts"], {
+    stdio: "inherit",
     env: {
       ...process.env,
-      PREVIEW_URL: "http://127.0.0.1:4174",
+      PREVIEW_URL,
       MIN_STEPS: String(state.manifest.steps.length),
       UI_PROOF: `public/assets/course/${MODULE_ID}/ui-desktop-proof.png`,
     },
-    stdio: "inherit",
   });
-  const code: number = await new Promise((resolve) => {
-    verify.on("close", (value) => resolve(value ?? 1));
-  });
-  preview.kill("SIGTERM");
-  await wait(200);
-  try {
-    preview.kill("SIGKILL");
-  } catch {
-    /* already exited */
-  }
-  if (code !== 0) {
-    throw new Error("UI verification failed for Uday AWS module.");
-  }
   console.log(JSON.stringify(report, null, 2));
 } finally {
-  try {
-    execFileSync("pkill", ["-f", "vite preview --host 127.0.0.1 --port 4174"], { stdio: "ignore" });
-  } catch {
-    /* no leftover preview */
-  }
+  if (preview) stopManaged(preview);
   await server.close();
 }

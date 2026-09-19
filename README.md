@@ -33,13 +33,15 @@ The default hands-on path is a **high-fidelity AWS Console replica** so Cursor C
 ## Queue execution
 
 ```bash
-npm run e2e:uday
-npm run e2e:uday:console
+npm test
+npm run e2e
 ```
 
-`e2e:uday` ingests [Uday_AWS](https://github.com/DeeptiShuklaProject/Uday_AWS) chapters and runs every agent gate.
+`npm run e2e` is the end-to-end path: S3/VPC pipeline, Uday chapter ingest through every basin gate, lesson-preview verification, then the agent test UI.
 
-`e2e:uday:console` is the Playwright **IAM login** test for Uday Module 08 Lab 1 (`enterprise-image-processor`): it reaches live `console.aws.amazon.com`, then signs in as an IAM user (root disabled) and captures the create-function / success / CloudWatch frames. Live authenticated sessions require operator-owned `AWS_CONSOLE_*` plus `AWS_E2E_LIVE=1`; CI uses the lab replica login.
+`e2e:uday` ingests [Uday_AWS](https://github.com/DeeptiShuklaProject/Uday_AWS) chapters and runs every agent gate, then checks the lesson walkthrough.
+
+`e2e:uday:console` (also covered by `npm test`) is the Playwright **IAM login** test for Uday Module 08 Lab 1 (`enterprise-image-processor`): it reaches live `console.aws.amazon.com`, then signs in as an IAM user (root disabled) and captures the create-function / success / CloudWatch frames. Live authenticated sessions require operator-owned `AWS_CONSOLE_*` plus `AWS_E2E_LIVE=1`; CI uses the lab replica login.
 
 Open the test UI (API + Vite together):
 

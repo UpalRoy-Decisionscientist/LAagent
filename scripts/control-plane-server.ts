@@ -93,7 +93,15 @@ export async function executeControlRun(run: ControlRun): Promise<void> {
       services: state.manifest?.services,
       messages: state.messages,
     };
-    run.status = Object.values(state.gates).includes("fail") ? "fail" : "ok";
+    const failed = Object.entries(state.gates).filter(
+      ([gate, status]) => run.gates.includes(gate as PipelineGate) && status === "fail",
+    );
+    if (failed.length) {
+      run.status = "fail";
+      run.error = `Gates failed: ${failed.map(([gate]) => gate).join(", ")}`;
+      throw new Error(run.error);
+    }
+    run.status = "ok";
   } finally {
     await server?.close();
   }

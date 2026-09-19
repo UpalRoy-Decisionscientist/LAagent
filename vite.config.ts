@@ -11,4 +11,11 @@ export default defineConfig({
       "/api": process.env.CONTROL_ORIGIN ?? "http://127.0.0.1:8787",
     },
   },
+  preview: {
+    host: "127.0.0.1",
+    port: 4173,
+    proxy: {
+      "/api": process.env.CONTROL_ORIGIN ?? "http://127.0.0.1:8787",
+    },
+  },
 });

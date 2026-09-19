@@ -4,8 +4,13 @@ import { DiagnosticGateway } from "./components/course/DiagnosticGateway.tsx";
 import { AgentControlRoom } from "./components/control/AgentControlRoom.tsx";
 import { activeModule } from "./generated/activeModule.ts";
 
+function initialView(): "control" | "lesson" {
+  if (typeof window === "undefined") return "control";
+  return new URLSearchParams(window.location.search).get("view") === "lesson" ? "lesson" : "control";
+}
+
 export default function App() {
-  const [view, setView] = useState<"control" | "lesson">("control");
+  const [view, setView] = useState<"control" | "lesson">(initialView);
 
   return (
     <div className="min-h-screen">
