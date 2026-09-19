@@ -13,6 +13,7 @@ coverage
 terraform/.terraform
 terraform/**/generated.auto.tfvars.json
 terraform/**/terraform.tfvars.json
+terraform/**/tfvars.redacted.json
 terraform/**/*.tfstate
 terraform/**/*.tfstate.*
 node_modules/.tmp

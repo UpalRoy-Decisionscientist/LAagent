@@ -151,7 +151,7 @@ variable "assign_public_ip" {
 
 variable "tags" {
   type    = map(string)
-  default = null
+  default = {}
 }
 
 module "agent_pool" {

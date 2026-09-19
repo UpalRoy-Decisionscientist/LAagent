@@ -57,7 +57,21 @@ describe("aws-ia terraform-aws-tf-cloud-agents", () => {
     expect(report.mode).toBe("dry-run");
     expect(report.source).toContain("terraform-aws-tf-cloud-agents");
     expect(report.inputs.tfe_agent_token).toBe("***");
-    const written = JSON.parse(readFileSync(report.tfvarsPath, "utf8")) as { tfe_agent_token: string };
+    const written = JSON.parse(readFileSync(report.tfvarsPath, "utf8")) as {
+      tfe_agent_token: string;
+      aws_region: string;
+    };
     expect(written.tfe_agent_token).toBe("***");
+    expect(written.aws_region).toBe("us-west-2");
+  });
+
+  it("maps TFE_TOKEN into agent inputs for the HashiCorp provider", () => {
+    const input = tfCloudAgentInputsFromEnv({
+      TFE_TOKEN: "tfe-secret",
+      AWS_VPC_ID: "vpc-0abc123def4567890",
+      AWS_SUBNET_IDS: "subnet-0aaa111bbb222ccc3",
+      TFC_ORG_NAME: "academy",
+    });
+    expect(input.tfe_agent_token).toBe("tfe-secret");
   });
 });

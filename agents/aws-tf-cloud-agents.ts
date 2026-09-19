@@ -87,22 +87,22 @@ export function resolveAwsCallerIdentity(
 
 export function writeTerraformVars(input: TfCloudAgentInputs, terraformDir = ROOT): string {
   fs.mkdirSync(terraformDir, { recursive: true });
-  const tfvarsPath = path.join(terraformDir, "terraform.tfvars.json");
   const vars = toTerraformVars(input);
-  const redacted = {
-    ...vars,
-    tfe_agent_token: input.tfe_agent_token ? "***" : "",
-  };
-  fs.writeFileSync(tfvarsPath, `${JSON.stringify(redacted, null, 2)}\n`);
   const secretPath = path.join(terraformDir, "generated.auto.tfvars.json");
   fs.writeFileSync(secretPath, `${JSON.stringify(vars, null, 2)}\n`);
-  return tfvarsPath;
+  const redactedPath = path.join(terraformDir, "tfvars.redacted.json");
+  fs.writeFileSync(
+    redactedPath,
+    `${JSON.stringify({ ...vars, tfe_agent_token: input.tfe_agent_token ? "***" : "" }, null, 2)}\n`,
+  );
+  return redactedPath;
 }
 
 export function runTfCloudAgents(options: {
   env?: NodeJS.ProcessEnv;
   apply?: boolean;
   terraformDir?: string;
+  writeVars?: boolean;
 } = {}): TfCloudAgentRun {
   const env = options.env ?? process.env;
   const terraformDir = options.terraformDir ?? ROOT;
@@ -111,6 +111,7 @@ export function runTfCloudAgents(options: {
   const identity = resolveAwsCallerIdentity(env);
   const terraformAvailable = detectTerraform();
   const applyRequested = options.apply ?? env.AWS_TF_AGENTS_APPLY === "1";
+  const writeVars = options.writeVars ?? true;
   const notes: string[] = [
     `Embedded ${TF_CLOUD_AGENTS_SOURCE} ${TF_CLOUD_AGENTS_VERSION} (Apache-2.0).`,
     "AWS access uses the default credential chain / ECS task role — not console passwords.",
@@ -126,11 +127,18 @@ export function runTfCloudAgents(options: {
   if (placeholderNetwork) {
     notes.push("Placeholder VPC/subnet IDs in use. Set AWS_VPC_ID and AWS_SUBNET_IDS for a live apply.");
   }
-  if (!env.TFC_TOKEN && inputs.create_tfe_agent_pool) {
-    notes.push("HCP Terraform API token (TFC_TOKEN) is unset; agent-pool resources cannot be created until it is provided.");
+  if (!env.TFC_TOKEN && !env.TFE_TOKEN && inputs.create_tfe_agent_pool) {
+    notes.push(
+      "HCP Terraform API token is unset (TFE_TOKEN or TFC_TOKEN). Agent-pool resources cannot be created until it is provided.",
+    );
   }
 
-  const tfvarsPath = writeTerraformVars(inputs, terraformDir);
+  const tfvarsPath = writeVars ? writeTerraformVars(inputs, terraformDir) : "";
+  const terraformEnv = {
+    ...env,
+    TFE_TOKEN: env.TFE_TOKEN || env.TFC_TOKEN || "",
+    AWS_REGION: inputs.aws_region,
+  };
   const canMutate =
     applyRequested &&
     terraformAvailable &&
@@ -147,19 +155,19 @@ export function runTfCloudAgents(options: {
       execFileSync("terraform", ["init", "-input=false", "-no-color"], {
         cwd: terraformDir,
         stdio: "inherit",
-        env,
+        env: terraformEnv,
       });
       execFileSync("terraform", [...args, "-input=false", "-no-color"], {
         cwd: terraformDir,
         stdio: "inherit",
-        env,
+        env: terraformEnv,
       });
       mode = args[0] === "apply" ? "apply" : "plan";
       if (mode === "apply") {
         const raw = execFileSync("terraform", ["output", "-json"], {
           cwd: terraformDir,
           encoding: "utf8",
-          env,
+          env: terraformEnv,
         });
         outputs = JSON.parse(raw) as Record<string, unknown>;
       }

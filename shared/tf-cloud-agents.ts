@@ -30,6 +30,7 @@ export interface TfCloudAgentInputs {
   hcp_terraform_org_name: string;
   vpc_id: string;
   subnet_ids: string[];
+  aws_region: string;
   hcp_terraform_address: string;
   create_tfe_agent_pool: boolean;
   tfe_agent_token: string;
@@ -60,6 +61,7 @@ export const TF_CLOUD_AGENT_DEFAULTS: Omit<
   TfCloudAgentInputs,
   "name" | "hcp_terraform_org_name" | "vpc_id" | "subnet_ids"
 > = {
+  aws_region: "us-west-2",
   hcp_terraform_address: "https://app.terraform.io",
   create_tfe_agent_pool: true,
   tfe_agent_token: "",
@@ -172,9 +174,10 @@ export function tfCloudAgentInputsFromEnv(
     hcp_terraform_org_name: env.TFC_ORG_NAME?.trim() || "laagent-academy",
     vpc_id: env.AWS_VPC_ID?.trim() || "vpc-00000000000000000",
     subnet_ids: csv(env, "AWS_SUBNET_IDS", ["subnet-00000000000000000"]),
+    aws_region: env.AWS_REGION?.trim() || env.AWS_DEFAULT_REGION?.trim() || TF_CLOUD_AGENT_DEFAULTS.aws_region,
     hcp_terraform_address: env.TFC_ADDRESS?.trim() || TF_CLOUD_AGENT_DEFAULTS.hcp_terraform_address,
     create_tfe_agent_pool: boolFromEnv(env, "TFC_CREATE_AGENT_POOL", true),
-    tfe_agent_token: env.TFC_AGENT_TOKEN ?? "",
+    tfe_agent_token: env.TFC_AGENT_TOKEN || env.TFE_TOKEN || env.TFC_TOKEN || "",
     tfe_agent_pool_name: env.TFC_AGENT_POOL_NAME?.trim() || "",
     agent_cpu: Number(env.TFC_AGENT_CPU ?? TF_CLOUD_AGENT_DEFAULTS.agent_cpu),
     agent_memory: Number(env.TFC_AGENT_MEMORY ?? TF_CLOUD_AGENT_DEFAULTS.agent_memory),
@@ -197,6 +200,7 @@ export function toTerraformVars(input: TfCloudAgentInputs): Record<string, unkno
     name: input.name,
     hcp_terraform_org_name: input.hcp_terraform_org_name,
     hcp_terraform_address: input.hcp_terraform_address,
+    aws_region: input.aws_region,
     vpc_id: input.vpc_id,
     subnet_ids: input.subnet_ids,
     create_tfe_agent_pool: input.create_tfe_agent_pool,

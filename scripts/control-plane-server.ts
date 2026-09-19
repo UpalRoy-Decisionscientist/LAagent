@@ -146,7 +146,7 @@ export async function startControlPlaneServer(
         return;
       }
       if (req.method === "GET" && url.pathname === "/api/aws-access") {
-        json(res, 200, runTfCloudAgents());
+        json(res, 200, runTfCloudAgents({ writeVars: false }));
         return;
       }
       if (req.method === "GET" && url.pathname === "/api/presets") {
