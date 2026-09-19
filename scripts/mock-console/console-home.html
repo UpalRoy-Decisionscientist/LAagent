@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>AWS Management Console | Home</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot active">λ</div>
+        <div class="dot">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Management Console</span></div>
+          <div class="account">academy-operator @ 1234-5678-9012 · us-east-1 · signed in</div>
+        </header>
+        <div class="content">
+          <div class="card" data-capture="home">
+            <div class="banner">IAM session established. Root credentials were not used.</div>
+            <h1>Console Home</h1>
+            <p class="lead">Uday Module 08 lab: create <strong>enterprise-image-processor</strong> in Lambda with a least-privilege execution role.</p>
+            <p><a class="btn" href="/lambda/create" style="display:inline-block;text-decoration:none">Open Lambda</a></p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      if (!sessionStorage.getItem("awsLabSession")) location.replace("/signin");
+    </script>
+  </body>
+</html>

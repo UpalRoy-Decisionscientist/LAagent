@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>enterprise-image-processor | Lambda</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot active">λ</div>
+        <div class="dot">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Lambda</span></div>
+          <div class="account">academy-operator @ 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="card" data-capture="lambda-success">
+            <div class="banner">Function enterprise-image-processor created. ARN redacted for publication.</div>
+            <h1>Function overview</h1>
+            <table>
+              <tr><th>Name</th><td>enterprise-image-processor</td></tr>
+              <tr><th>ARN</th><td>arn:aws:lambda:us-east-1:1234-5678-9012:function:enterprise-image-processor</td></tr>
+              <tr><th>Runtime</th><td>python3.12</td></tr>
+              <tr><th>Architecture</th><td>arm64</td></tr>
+              <tr><th>Role</th><td>enterprise-image-processor-role-xxxxx (AWSLambdaBasicExecutionRole)</td></tr>
+            </table>
+            <p style="margin-top:18px"><a class="btn" href="/lambda/logs" style="display:inline-block;text-decoration:none">Open CloudWatch logs</a></p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      if (!sessionStorage.getItem("awsLabSession")) location.replace("/signin");
+    </script>
+  </body>
+</html>

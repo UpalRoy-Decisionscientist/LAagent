@@ -1,0 +1,38 @@
+{
+  "name": "aws-academy-course-builder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Multi-agent AWS Academy course builder: ingest, capture, audit, compose, and release.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "test": "vitest run",
+    "pipeline": "tsx scripts/run-pipeline.ts",
+    "e2e:uday": "tsx scripts/e2e-uday-aws.ts",
+    "e2e:uday:console": "tsx scripts/uday-aws-console-login-e2e.ts",
+    "capture": "tsx scripts/playwright-recorder.ts",
+    "typecheck": "tsc -p tsconfig.app.json --pretty false --noEmit && tsc -p tsconfig.node.json --pretty false --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^0.511.0",
+    "mammoth": "^1.9.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.8",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.1",
+    "playwright": "^1.52.0",
+    "tailwindcss": "^4.1.8",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.1"
+  }
+}

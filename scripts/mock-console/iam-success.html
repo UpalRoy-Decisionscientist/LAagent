@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>IAM role created | AWS Console (lab replica)</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot active">IAM</div>
+        <div class="dot">VPC</div>
+        <div class="dot">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Academy Lab Console</span></div>
+          <div class="account">Account 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="card" data-capture="iam-success">
+            <div class="banner">Role academy-s3-reader created. AdministratorAccess was not attached.</div>
+            <h1>Role details</h1>
+            <p class="lead">Screenshot this confirmation. The account identifier is already masked for publication.</p>
+            <table>
+              <tr><th>Role name</th><td>academy-s3-reader</td></tr>
+              <tr><th>ARN</th><td>arn:aws:iam::1234-5678-9012:role/academy-s3-reader</td></tr>
+              <tr><th>Permissions</th><td>s3:ListBucket, s3:GetObject (bucket-scoped)</td></tr>
+              <tr><th>Max session</th><td>3600 seconds</td></tr>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

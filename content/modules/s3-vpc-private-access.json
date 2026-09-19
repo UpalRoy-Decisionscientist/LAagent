@@ -1,0 +1,278 @@
+{
+  "moduleId": "s3-vpc-private-access",
+  "title": "Private S3 Access from a VPC",
+  "summary": "Build a private path from multi-AZ subnets to Amazon S3 using a gateway VPC endpoint, least-privilege IAM, and CloudWatch verification.",
+  "services": [
+    "IAM",
+    "S3",
+    "VPC",
+    "CloudWatch"
+  ],
+  "tracks": [
+    "beginner",
+    "intermediate",
+    "advanced"
+  ],
+  "objectives": [
+    {
+      "id": "lo-iam-least-privilege",
+      "title": "Author a least-privilege IAM role for private S3 reads",
+      "bloom": "apply",
+      "services": [
+        "IAM",
+        "S3"
+      ],
+      "prerequisites": [],
+      "track": "beginner",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "create",
+          "target": "IAM"
+        },
+        {
+          "subject": "IAM role",
+          "action": "allow",
+          "target": "S3"
+        }
+      ]
+    },
+    {
+      "id": "lo-vpc-private-subnets",
+      "title": "Place workloads in multi-AZ private subnets",
+      "bloom": "apply",
+      "services": [
+        "VPC"
+      ],
+      "prerequisites": [
+        "lo-iam-least-privilege"
+      ],
+      "track": "beginner",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "create",
+          "target": "VPC"
+        }
+      ]
+    },
+    {
+      "id": "lo-s3-private-bucket",
+      "title": "Create a private encrypted S3 bucket with Block Public Access",
+      "bloom": "apply",
+      "services": [
+        "S3"
+      ],
+      "prerequisites": [
+        "lo-iam-least-privilege"
+      ],
+      "track": "beginner",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "create",
+          "target": "S3"
+        },
+        {
+          "subject": "Learner",
+          "action": "enable",
+          "target": "S3"
+        }
+      ]
+    },
+    {
+      "id": "lo-s3-gateway-endpoint",
+      "title": "Route private subnet S3 traffic through a gateway VPC endpoint",
+      "bloom": "analyze",
+      "services": [
+        "VPC",
+        "S3"
+      ],
+      "prerequisites": [
+        "lo-vpc-private-subnets",
+        "lo-s3-private-bucket"
+      ],
+      "track": "intermediate",
+      "skipGate": {
+        "id": "sg-vpc-endpoints",
+        "prompt": "Write a gateway endpoint policy that allows s3:GetObject only when aws:SourceVpce matches the lab endpoint, and explain why a NAT gateway is unnecessary for S3-only private workloads.",
+        "expectedSignals": [
+          "aws:SourceVpce",
+          "gateway endpoint",
+          "no NAT",
+          "least privilege"
+        ],
+        "passThreshold": 3
+      },
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "create",
+          "target": "VPC"
+        }
+      ]
+    },
+    {
+      "id": "lo-verify-private-path",
+      "title": "Verify GetObject over the private path with CloudWatch evidence",
+      "bloom": "evaluate",
+      "services": [
+        "S3",
+        "CloudWatch"
+      ],
+      "prerequisites": [
+        "lo-s3-gateway-endpoint"
+      ],
+      "track": "advanced",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "verify",
+          "target": "S3"
+        },
+        {
+          "subject": "Learner",
+          "action": "confirm",
+          "target": "CloudWatch"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": 1,
+      "title": "Create a least-privilege lab role",
+      "description": "In IAM, create academy-s3-reader. Attach an inline policy that allows s3:ListBucket on the bucket ARN and s3:GetObject on object ARNs only. Leave AdministratorAccess detached.",
+      "imageSrc": "/assets/course/s3-vpc-private-access/step-1-iam-role-form.webp",
+      "imageWidth": 2960,
+      "imageHeight": 954,
+      "alt": "IAM create-role form with scoped S3 read actions highlighted before submit. Redacted AWS Console snapshot for Create a least-privilege lab role.",
+      "cliFallback": "aws iam create-role --role-name academy-s3-reader --assume-role-policy-document file://ec2-trust.json && aws iam put-role-policy --role-name academy-s3-reader --policy-name s3-read --policy-document file://s3-read.json",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege",
+        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Confirm the role ARN without exposing account secrets",
+      "description": "After creation, record the role name and redacted ARN. Treat the 12-digit account id as sensitive and keep it masked in every instructional screenshot.",
+      "imageSrc": "/assets/course/s3-vpc-private-access/step-2-iam-role-success.webp",
+      "imageWidth": 2960,
+      "imageHeight": 792,
+      "alt": "IAM success banner with redacted role ARN. Redacted AWS Console snapshot for Confirm the role ARN without exposing account secrets.",
+      "cliFallback": "aws iam get-role --role-name academy-s3-reader --query Role.Arn --output text",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege",
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Create multi-AZ private subnets",
+      "description": "Create lab-vpc (10.20.0.0/16) with private subnets in two Availability Zones. Do not add a 0.0.0.0/0 route to an internet gateway on these route tables.",
+      "imageSrc": "/assets/course/s3-vpc-private-access/step-3-vpc-private-subnets.webp",
+      "imageWidth": 2960,
+      "imageHeight": 580,
+      "alt": "VPC subnet table showing two private subnets and no IGW default route. Redacted AWS Console snapshot for Create multi-AZ private subnets.",
+      "cliFallback": "aws ec2 create-vpc --cidr-block 10.20.0.0/16 && aws ec2 create-subnet --vpc-id vpc-lab --cidr-block 10.20.1.0/24 --availability-zone us-east-1a",
+      "terraformFallback": "resource \"aws_subnet\" \"private_a\" { vpc_id = aws_vpc.lab.id cidr_block = \"10.20.1.0/24\" availability_zone = \"us-east-1a\" }",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Create a private encrypted bucket",
+      "description": "Create academy-lab-artifacts with Block Public Access enabled, SSE-S3 default encryption, and bucket versioning on. Confirm the public-access settings panel before create.",
+      "imageSrc": "/assets/course/s3-vpc-private-access/step-4-s3-bucket-create.webp",
+      "imageWidth": 2960,
+      "imageHeight": 802,
+      "alt": "S3 create-bucket wizard with Block Public Access and encryption enabled. Redacted AWS Console snapshot for Create a private encrypted bucket.",
+      "cliFallback": "aws s3api create-bucket --bucket academy-lab-artifacts --region us-east-1 && aws s3api put-public-access-block --bucket academy-lab-artifacts --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html",
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
+        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Attach a gateway VPC endpoint for S3",
+      "description": "Create a Gateway endpoint for com.amazonaws.us-east-1.s3, associate both private route tables, and restrict the endpoint policy to the lab bucket ARN with aws:SourceVpc.",
+      "imageSrc": "/assets/course/s3-vpc-private-access/step-5-vpce-gateway.webp",
+      "imageWidth": 2960,
+      "imageHeight": 846,
+      "alt": "VPC endpoint create form with S3 gateway type and route-table associations. Redacted AWS Console snapshot for Attach a gateway VPC endpoint for S3.",
+      "cliFallback": "aws ec2 create-vpc-endpoint --vpc-id vpc-lab --service-name com.amazonaws.us-east-1.s3 --route-table-ids rtb-private-a rtb-private-b --policy-document file://vpce-s3.json",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
+        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Download an object over the private path",
+      "description": "From a private instance with the lab role, run aws s3 cp. There is no public IP and no NAT. Success proves prefix-list routing through the gateway endpoint.",
+      "imageSrc": "/assets/course/s3-vpc-private-access/step-6-s3-getobject-verify.webp",
+      "imageWidth": 2960,
+      "imageHeight": 886,
+      "alt": "CLI terminal showing a successful private GetObject with redacted identifiers. Redacted AWS Console snapshot for Download an object over the private path.",
+      "cliFallback": "aws s3 cp s3://academy-lab-artifacts/readme.txt /tmp/readme.txt --region us-east-1",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
+        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Confirm S3 request metrics in CloudWatch",
+      "description": "Open the bucket request metrics. GetRequests should increment after the private copy. Use this as architecture verification rather than a screenshot of secrets.",
+      "imageSrc": "/assets/course/s3-vpc-private-access/step-7-cloudwatch-metrics.webp",
+      "imageWidth": 2960,
+      "imageHeight": 848,
+      "alt": "CloudWatch metric widget for S3 GetRequests after the private copy. Redacted AWS Console snapshot for Confirm S3 request metrics in CloudWatch.",
+      "cliFallback": "aws cloudwatch get-metric-statistics --namespace AWS/S3 --metric-name GetRequests --dimensions Name=BucketName,Value=academy-lab-artifacts Name=FilterId,Value=EntireBucket --start-time 2026-01-01T00:00:00Z --end-time 2026-01-01T01:00:00Z --period 300 --statistics Sum",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html",
+        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      ]
+    }
+  ],
+  "skipGates": [
+    {
+      "id": "sg-vpc-endpoints",
+      "prompt": "Write a gateway endpoint policy that allows s3:GetObject only when aws:SourceVpce matches the lab endpoint, and explain why a NAT gateway is unnecessary for S3-only private workloads.",
+      "expectedSignals": [
+        "aws:SourceVpce",
+        "gateway endpoint",
+        "no NAT",
+        "least privilege"
+      ],
+      "passThreshold": 3
+    }
+  ],
+  "academicRigorScore": 100,
+  "generatedAt": "2026-09-19T13:11:08.330Z"
+}

@@ -1,0 +1,348 @@
+{
+  "moduleId": "uday-aws-iam-s3-lambda",
+  "title": "AWS IAM (Identity & Access Management)",
+  "summary": "Curriculum compiled from AWS IAM (Identity & Access Management). Services: IAM, STS, KMS, VPC, S3, EC2, Lambda, ECS.",
+  "services": [
+    "IAM",
+    "STS"
+  ],
+  "tracks": [
+    "beginner",
+    "intermediate",
+    "advanced"
+  ],
+  "objectives": [
+    {
+      "id": "lo-1-explain",
+      "title": "Explain how IAM works — users, groups, roles, and policies.",
+      "bloom": "understand",
+      "services": [
+        "IAM"
+      ],
+      "prerequisites": [],
+      "track": "beginner",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "explain",
+          "target": "IAM"
+        }
+      ]
+    },
+    {
+      "id": "lo-2-create",
+      "title": "Create IAM users, groups, and roles with least-privilege permissions.",
+      "bloom": "apply",
+      "services": [
+        "IAM"
+      ],
+      "prerequisites": [
+        "lo-1-explain"
+      ],
+      "track": "intermediate",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "create",
+          "target": "IAM"
+        }
+      ]
+    },
+    {
+      "id": "lo-3-write",
+      "title": "Write custom IAM policies using JSON policy documents.",
+      "bloom": "apply",
+      "services": [
+        "IAM"
+      ],
+      "prerequisites": [
+        "lo-2-create"
+      ],
+      "track": "intermediate",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "write",
+          "target": "IAM"
+        }
+      ],
+      "skipGate": {
+        "id": "sg-source-curriculum",
+        "prompt": "Without repeating the beginner labs, explain a production-ready IAM control from this curriculum and name the AWS service it depends on.",
+        "expectedSignals": [
+          "IAM",
+          "least privilege",
+          "STS",
+          "role"
+        ],
+        "passThreshold": 3
+      }
+    },
+    {
+      "id": "lo-4-configure",
+      "title": "Configure MFA, password policies, and account security settings.",
+      "bloom": "apply",
+      "services": [
+        "IAM",
+        "STS"
+      ],
+      "prerequisites": [
+        "lo-3-write"
+      ],
+      "track": "intermediate",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "configure",
+          "target": "IAM"
+        },
+        {
+          "subject": "Learner",
+          "action": "configure",
+          "target": "STS"
+        }
+      ]
+    },
+    {
+      "id": "lo-5-implement",
+      "title": "Implement cross-account access using IAM roles and STS.",
+      "bloom": "apply",
+      "services": [
+        "IAM",
+        "STS"
+      ],
+      "prerequisites": [
+        "lo-4-configure"
+      ],
+      "track": "intermediate",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "implement",
+          "target": "IAM"
+        },
+        {
+          "subject": "Learner",
+          "action": "implement",
+          "target": "STS"
+        }
+      ]
+    },
+    {
+      "id": "lo-6-design",
+      "title": "Design a production IAM strategy for a multi-team organization.",
+      "bloom": "create",
+      "services": [
+        "IAM"
+      ],
+      "prerequisites": [
+        "lo-5-implement"
+      ],
+      "track": "advanced",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "design",
+          "target": "IAM"
+        }
+      ]
+    },
+    {
+      "id": "lo-7-troubleshoot",
+      "title": "Troubleshoot AccessDenied errors, policy conflicts, and permission issues.",
+      "bloom": "analyze",
+      "services": [
+        "IAM",
+        "STS"
+      ],
+      "prerequisites": [
+        "lo-6-design"
+      ],
+      "track": "intermediate",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "troubleshoot",
+          "target": "IAM"
+        },
+        {
+          "subject": "Learner",
+          "action": "troubleshoot",
+          "target": "STS"
+        }
+      ]
+    },
+    {
+      "id": "lo-8-answer",
+      "title": "Answer interview questions about IAM, security, and access management.",
+      "bloom": "apply",
+      "services": [
+        "IAM"
+      ],
+      "prerequisites": [
+        "lo-7-troubleshoot"
+      ],
+      "track": "intermediate",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "answer",
+          "target": "IAM"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": 1,
+      "title": "Building a Production File Processing Lambda Function",
+      "description": "Open the AWS Management Console and navigate to **AWS Lambda**. Click **Create function** -> Select **Author from scratch**. Function Name: `enterprise-image-processor`. Runtime: **Python 3.12**, Architecture: **arm64 (Graviton2)**.",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-1-lab-1-building-a-production-file-processing-lamb.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1130,
+      "alt": "Lab 1: Building a Production File Processing Lambda Function console form before submit. Redacted AWS Console snapshot for Building a Production File Processing Lambda Function.",
+      "cliFallback": "aws iam create-user --user-name alice",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Verify Building a Production File Processing Lambda Function",
+      "description": "Confirm the resource exists, redact account identifiers, and capture the success or runtime state used as instructional proof.",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-2-lab-1-building-a-production-file-processing-lamb-verify.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1086,
+      "alt": "Success and verification surface after the lab action. Redacted AWS Console snapshot for Verify Building a Production File Processing Lambda Function.",
+      "cliFallback": "aws iam add-user-to-group --user-name alice --group-name Developers",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Execute iam lab command",
+      "description": "Run the curriculum CLI without long-lived access keys: aws iam create-group --group-name Developers",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-3-aws-iam-create-group-group-name-develo.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1086,
+      "alt": "CLI and console replica for iam. Redacted AWS Console snapshot for Execute iam lab command.",
+      "cliFallback": "aws iam create-group --group-name Developers",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html",
+        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Execute iam lab command",
+      "description": "Run the curriculum CLI without long-lived access keys: aws iam attach-group-policy \\",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-4-aws-iam-attach-group-policy.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1086,
+      "alt": "CLI and console replica for iam. Redacted AWS Console snapshot for Execute iam lab command.",
+      "cliFallback": "aws iam attach-group-policy \\",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Execute iam lab command",
+      "description": "Run the curriculum CLI without long-lived access keys: aws iam create-role \\",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-5-aws-iam-create-role.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1086,
+      "alt": "CLI and console replica for iam. Redacted AWS Console snapshot for Execute iam lab command.",
+      "cliFallback": "aws iam create-role \\",
+      "auditPassed": true,
+      "academicRigorScore": 88,
+      "citations": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Execute iam lab command",
+      "description": "Run the curriculum CLI without long-lived access keys: aws iam attach-role-policy \\",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-6-aws-iam-attach-role-policy.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1086,
+      "alt": "CLI and console replica for iam. Redacted AWS Console snapshot for Execute iam lab command.",
+      "cliFallback": "aws iam attach-role-policy \\",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html"
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Execute iam lab command",
+      "description": "Run the curriculum CLI without long-lived access keys: aws iam create-instance-profile --instance-profile-name WebAppProfile",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-7-aws-iam-create-instance-profile-instan.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1086,
+      "alt": "CLI and console replica for iam. Redacted AWS Console snapshot for Execute iam lab command.",
+      "cliFallback": "aws iam create-instance-profile --instance-profile-name WebAppProfile",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html"
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Execute iam lab command",
+      "description": "Run the curriculum CLI without long-lived access keys: aws iam add-role-to-instance-profile \\",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-8-aws-iam-add-role-to-instance-profile.webp",
+      "imageWidth": 2960,
+      "imageHeight": 1086,
+      "alt": "CLI and console replica for iam. Redacted AWS Console snapshot for Execute iam lab command.",
+      "cliFallback": "aws iam add-role-to-instance-profile \\",
+      "auditPassed": true,
+      "academicRigorScore": 100,
+      "citations": [
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html"
+      ]
+    }
+  ],
+  "skipGates": [
+    {
+      "id": "sg-source-curriculum",
+      "prompt": "Without repeating the beginner labs, explain a production-ready IAM control from this curriculum and name the AWS service it depends on.",
+      "expectedSignals": [
+        "IAM",
+        "least privilege",
+        "STS",
+        "role"
+      ],
+      "passThreshold": 3
+    }
+  ],
+  "academicRigorScore": 99,
+  "generatedAt": "2026-09-19T13:40:37.254Z"
+}

@@ -1,0 +1,13 @@
+node_modules
+.cache
+dist
+.DS_Store
+*.local
+.env
+auth/*.json
+content/basin/*.json
+!content/basin/.gitkeep
+public/assets/course/**/*-raw.png
+coverage
+.vite
+node_modules/.tmp

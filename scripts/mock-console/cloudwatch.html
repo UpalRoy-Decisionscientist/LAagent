@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>CloudWatch S3 metrics | AWS Console (lab replica)</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot">VPC</div>
+        <div class="dot">S3</div>
+        <div class="dot active">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Academy Lab Console</span></div>
+          <div class="account">Account 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="navcrumbs">CloudWatch &gt; Metrics &gt; S3</div>
+          <div class="card" data-capture="cw">
+            <h1>GetRequests · academy-lab-artifacts</h1>
+            <p class="lead">Filter: EntireBucket · Period: 5 minutes · Statistic: Sum. Spike aligns with the private aws s3 cp.</p>
+            <div class="metric">
+              <div class="bar" style="height:40px"></div>
+              <div class="bar" style="height:44px"></div>
+              <div class="bar" style="height:38px"></div>
+              <div class="bar" style="height:160px"></div>
+              <div class="bar" style="height:120px"></div>
+              <div class="bar" style="height:70px"></div>
+              <div class="bar" style="height:48px"></div>
+            </div>
+            <p class="ok" style="margin-top:16px">Last datapoint Sum=4 GetRequests · No public GetObject from 0.0.0.0/0</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

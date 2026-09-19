@@ -1,0 +1,76 @@
+{
+  "documents": [
+    {
+      "id": "s3-block-public-access",
+      "service": "S3",
+      "title": "S3 Block Public Access",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html",
+      "pillars": ["Security"],
+      "text": "Amazon S3 Block Public Access provides settings for access points, buckets, and accounts to help you manage public access to Amazon S3 resources. Account-level Block Public Access should remain enabled unless a documented exception exists. Bucket policies must not grant Principal * on s3:GetObject for private lab buckets."
+    },
+    {
+      "id": "s3-vpc-endpoint",
+      "service": "S3",
+      "title": "Gateway VPC endpoints for Amazon S3",
+      "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
+      "pillars": ["Security", "Cost Optimization", "Reliability"],
+      "text": "A gateway VPC endpoint for Amazon S3 enables private connectivity from VPC resources to S3 without an internet gateway, NAT device, VPN, or AWS Direct Connect. Route tables must include a prefix list route to the endpoint. Endpoint policies should restrict access to the lab bucket ARNs using aws:SourceVpc and aws:SourceVpce conditions."
+    },
+    {
+      "id": "iam-least-privilege",
+      "service": "IAM",
+      "title": "IAM least privilege",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege",
+      "pillars": ["Security"],
+      "text": "Grant only the permissions required to perform a task. Avoid AdministratorAccess in labs after bootstrap. Scope s3:GetObject, s3:PutObject, and s3:ListBucket to specific bucket ARNs. Require aws:RequestedRegion and, when traffic is private, aws:SourceVpce."
+    },
+    {
+      "id": "vpc-subnets",
+      "service": "VPC",
+      "title": "VPC private subnets",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+      "pillars": ["Reliability", "Security"],
+      "text": "Place application workloads that access S3 privately into private subnets across at least two Availability Zones. Private subnets should not have a default route to an internet gateway. Use VPC endpoints for AWS APIs instead of NAT when the workload only needs AWS service access."
+    },
+    {
+      "id": "cloudwatch-verification",
+      "service": "CloudWatch",
+      "title": "CloudWatch and CloudTrail verification",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html",
+      "pillars": ["Operational Excellence", "Reliability"],
+      "text": "Validate S3 data events with CloudTrail and observe request metrics in CloudWatch. Confirmation of VPC endpoint usage appears in S3 access logs and VPC flow logs when enabled. Do not print long-lived access keys in screenshots or CLI output."
+    },
+    {
+      "id": "well-architected-security",
+      "service": "Well-Architected",
+      "title": "Security pillar",
+      "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
+      "pillars": ["Security"],
+      "text": "Protect data in transit and at rest. Use encryption with SSE-S3 or SSE-KMS. Redact account IDs, access keys, and secret keys from instructional screenshots. Prefer IAM roles over access keys for compute."
+    },
+    {
+      "id": "iam-roles",
+      "service": "IAM",
+      "title": "IAM roles and temporary credentials",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+      "pillars": ["Security"],
+      "text": "IAM roles provide temporary credentials to AWS services and users. Prefer roles for Lambda, EC2, and CI/CD instead of long-lived access keys. Enable MFA on the root user and do not use the root user for daily operations."
+    },
+    {
+      "id": "lambda-execution-role",
+      "service": "Lambda",
+      "title": "Lambda execution role",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+      "pillars": ["Security", "Operational Excellence"],
+      "text": "AWS Lambda runs code without provisioning servers. Each function has an execution role that grants least-privilege permissions such as CloudWatch Logs. Use Python runtimes, environment variables without secrets, and CloudWatch metrics for Errors and Duration."
+    },
+    {
+      "id": "ec2-fundamentals",
+      "service": "EC2",
+      "title": "Amazon EC2 instances and roles",
+      "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+      "pillars": ["Reliability", "Security"],
+      "text": "Amazon EC2 provides resizable compute. Attach an instance profile role rather than storing access keys on disk. Place instances in private subnets when they only need AWS API access."
+    }
+  ]
+}

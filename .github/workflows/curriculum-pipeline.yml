@@ -1,0 +1,23 @@
+name: curriculum-pipeline
+
+on:
+  push:
+    branches: [main, "cursor/**"]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - run: npm test
+      - run: npm run e2e:uday:console
+      - run: npm run pipeline -- --source materials/s3-vpc-lab.md --module s3-vpc-private-access
+      - run: npm run e2e:uday
+      - run: npm run build

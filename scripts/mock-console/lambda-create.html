@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Create function | Lambda</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot active">λ</div>
+        <div class="dot">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Lambda</span></div>
+          <div class="account">academy-operator @ 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="navcrumbs">Lambda &gt; Functions &gt; Create function</div>
+          <div class="card" data-capture="lambda-create">
+            <h1>Create function</h1>
+            <p class="lead">Uday Masterclass Lab 1 — Author from scratch. Do not attach AdministratorAccess.</p>
+            <div class="grid">
+              <div>
+                <label>Function name</label>
+                <input class="field" id="function-name" value="enterprise-image-processor" />
+                <label style="margin-top:16px">Runtime</label>
+                <div class="field" data-highlight="runtime">Python 3.12</div>
+                <label style="margin-top:16px">Architecture</label>
+                <div class="field">arm64 (Graviton2)</div>
+              </div>
+              <div>
+                <label>Execution role</label>
+                <div class="field">Create a new role with basic Lambda permissions</div>
+                <label style="margin-top:16px">Environment variable</label>
+                <div class="field">ENVIRONMENT = production</div>
+                <p class="ok" style="margin-top:12px">Least privilege: AWSLambdaBasicExecutionRole only (CloudWatch Logs).</p>
+              </div>
+            </div>
+            <p style="margin-top:18px"><a class="btn" id="create-function" href="/lambda/success" style="display:inline-block;text-decoration:none">Create function</a></p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      if (!sessionStorage.getItem("awsLabSession")) location.replace("/signin");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Create S3 bucket | AWS Console (lab replica)</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot">VPC</div>
+        <div class="dot active">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Academy Lab Console</span></div>
+          <div class="account">Account 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="navcrumbs">S3 &gt; Buckets &gt; Create bucket</div>
+          <div class="card" data-capture="s3-create">
+            <h1>Create bucket</h1>
+            <div class="grid">
+              <div>
+                <label>Bucket name</label>
+                <div class="field">academy-lab-artifacts</div>
+                <label style="margin-top:16px">AWS Region</label>
+                <div class="field">us-east-1</div>
+                <label style="margin-top:16px">Default encryption</label>
+                <div class="field">SSE-S3 (AES-256)</div>
+              </div>
+              <div data-highlight="bpa">
+                <label>Block Public Access</label>
+                <div class="field">Block all public access: ON</div>
+                <p class="lead" style="margin-top:12px">BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets are enabled. This bucket is not a static website.</p>
+                <p class="ok">Public access blocked at bucket and account level.</p>
+              </div>
+            </div>
+            <p style="margin-top:18px"><button class="btn">Create bucket</button></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

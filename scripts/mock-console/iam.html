@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>IAM | AWS Console (lab replica)</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot active">IAM</div>
+        <div class="dot">VPC</div>
+        <div class="dot">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Academy Lab Console</span></div>
+          <div class="account">Account 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="navcrumbs">IAM &gt; Roles &gt; Create role</div>
+          <div class="card" data-capture="iam-form">
+            <h1>Create role</h1>
+            <p class="lead">Trusted entity: AWS service · Use case: EC2. Attach a customer inline policy, not AdministratorAccess.</p>
+            <div class="grid">
+              <div>
+                <label>Role name</label>
+                <div class="field">academy-s3-reader</div>
+                <label style="margin-top:16px">Trusted entity</label>
+                <div class="field">ec2.amazonaws.com</div>
+              </div>
+              <div data-highlight="policy">
+                <label>Inline policy JSON (least privilege)</label>
+                <textarea rows="12">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListLabBucket",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::academy-lab-artifacts"
+    },
+    {
+      "Sid": "ReadLabObjects",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject"],
+      "Resource": "arn:aws:s3:::academy-lab-artifacts/*",
+      "Condition": {
+        "StringEquals": { "aws:SourceVpce": "vpce-0labendpoint" }
+      }
+    }
+  ]
+}</textarea>
+              </div>
+            </div>
+            <p style="margin-top:18px"><button class="btn">Create role</button></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
