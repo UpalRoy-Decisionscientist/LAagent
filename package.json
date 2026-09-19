@@ -16,6 +16,7 @@
     "e2e:uday": "tsx scripts/e2e-uday-aws.ts",
     "e2e:uday:console": "tsx scripts/uday-aws-console-login-e2e.ts",
     "e2e:ui": "tsx scripts/verify-control-room.ts",
+    "aws:agents": "tsx scripts/run-tf-cloud-agents.ts",
     "capture": "tsx scripts/playwright-recorder.ts",
     "typecheck": "tsc -p tsconfig.app.json --pretty false --noEmit && tsc -p tsconfig.node.json --pretty false --noEmit"
   },

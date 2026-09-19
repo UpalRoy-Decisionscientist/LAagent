@@ -7,6 +7,11 @@ describe("agent control plane", () => {
     try {
       const presets = await fetch(`${server.origin}/api/presets`).then((response) => response.json());
       expect(presets.agents).toHaveLength(6);
+      expect(presets.presets.some((item: { id: string }) => item.id === "tf-cloud-agents")).toBe(true);
+
+      const aws = await fetch(`${server.origin}/api/aws-access`).then((response) => response.json());
+      expect(aws.source).toContain("terraform-aws-tf-cloud-agents");
+      expect(aws.mode).toBe("dry-run");
 
       const created = await fetch(`${server.origin}/api/runs`, {
         method: "POST",

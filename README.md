@@ -27,8 +27,17 @@ Agents never share hidden memory. They read and write a **collaboration basin** 
 | Pedagogical auditor | `agents/auditor.ts` | BM25 over `knowledge/aws-docs-kb.json` | Rigor ≥ 70; no access-key labs |
 | Course composer | `agents/composer.ts`, `src/components/course/` | React, Tailwind, lucide-react | CLS-safe `<picture>`, skip-gate quiz |
 | Git release | `agents/git-release.ts` | Git CLI | Conventional curriculum commit |
+| HCP Terraform AWS agents | `agents/aws-tf-cloud-agents.ts`, `terraform/tf-cloud-agents/` | aws-ia/tf-cloud-agents on ECS Fargate | IAM task role; no console passwords |
 
 The default hands-on path is a **high-fidelity AWS Console replica** so Cursor Cloud / CI can capture publication-grade images without operator credentials. Operators who already have a logged-in Playwright `storageState` may set `AWS_STORAGE_STATE` and point routes at their own session.
+
+Live AWS API access uses the [AWS IA Terraform Cloud agents](https://github.com/aws-ia/terraform-aws-tf-cloud-agents) stack (vendored under `terraform/vendor/terraform-aws-tf-cloud-agents`). Agents run on ECS Fargate with an IAM **task role** (`ReadOnlyAccess` by default) and poll HCP Terraform — no console password and no long-lived access keys in the curriculum pipeline.
+
+```bash
+npm run aws:agents
+```
+
+That writes validated `terraform.tfvars.json` from `AWS_PROFILE` / `AWS_VPC_ID` / `TFC_ORG_NAME`. Set `AWS_TF_AGENTS_APPLY=1` plus `TFC_TOKEN` only in an operator-owned account to `terraform apply`. The Agent test UI preset **HCP Terraform AWS agents** runs the same dry-run.
 
 ## Queue execution
 

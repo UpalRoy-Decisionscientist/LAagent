@@ -25,6 +25,8 @@ An agent may only mutate fields it owns. The orchestrator (`agents/orchestrator.
 5. **REACT_COMPOSE** — manifest + generated module JSON for the UI
 6. **GIT_COMMIT** — conventional message prepared (optional local commit via `--commit`)
 
+AWS API access for live labs is **not** console login. The pipeline embeds [aws-ia/terraform-aws-tf-cloud-agents](https://github.com/aws-ia/terraform-aws-tf-cloud-agents): ECS Fargate agents poll HCP Terraform using an IAM task role. `npm run aws:agents` dry-runs that stack from the default AWS credential chain.
+
 If a gate is `fail`, later agents throw. That is intentional: a beautiful screenshot of a hallucinated IAM policy must not ship.
 
 ## Visual standard

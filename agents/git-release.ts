@@ -20,7 +20,7 @@ export function runGitReleaseAgent(
     "scripts",
     "agents",
     "knowledge",
-    "materials",
+    "terraform",
   ];
 
   let summary = `Prepared conventional commit message for ${state.moduleId}.`;

@@ -16,7 +16,7 @@ export interface PipelinePreset {
   sourcePath: string;
   moduleId: string;
   chapters?: string[];
-  kind: "pipeline" | "console-login";
+  kind: "pipeline" | "console-login" | "tf-cloud-agents";
 }
 
 export const PIPELINE_PRESETS: PipelinePreset[] = [
@@ -52,6 +52,14 @@ export const PIPELINE_PRESETS: PipelinePreset[] = [
     sourcePath: "console-login",
     moduleId: "uday-lambda-console-login",
     kind: "console-login",
+  },
+  {
+    id: "tf-cloud-agents",
+    label: "HCP Terraform AWS agents",
+    description: "Prepare the aws-ia ECS Fargate Terraform Cloud agent stack (IAM task role, no console password).",
+    sourcePath: "tf-cloud-agents",
+    moduleId: "tf-cloud-agents",
+    kind: "tf-cloud-agents",
   },
 ];
 

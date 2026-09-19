@@ -6,6 +6,7 @@ import { PIPELINE_PRESETS, AGENT_CARDS } from "../shared/presets.ts";
 import { runOrchestrator } from "../agents/orchestrator.ts";
 import { startMockConsoleServer } from "./mock-console/server.ts";
 import { runUdayAwsConsoleLoginE2e } from "./uday-aws-console-login-e2e.ts";
+import { runTfCloudAgents } from "../agents/aws-tf-cloud-agents.ts";
 
 export interface ControlRun {
   id: string;
@@ -59,6 +60,24 @@ export async function executeControlRun(run: ControlRun): Promise<void> {
       gate: "PLAYWRIGHT_CAPTURE",
       status: "ok",
       summary: "Console login lab captured screenshots.",
+    });
+    return;
+  }
+  if (preset?.kind === "tf-cloud-agents" || run.sourcePath === "tf-cloud-agents") {
+    run.events.push({
+      at: new Date().toISOString(),
+      gate: "PLAYWRIGHT_CAPTURE",
+      status: "running",
+      summary: "Prepare HCP Terraform AWS agents",
+    });
+    const report = runTfCloudAgents();
+    run.result = report as unknown as Record<string, unknown>;
+    run.status = "ok";
+    run.events.push({
+      at: new Date().toISOString(),
+      gate: "PLAYWRIGHT_CAPTURE",
+      status: "ok",
+      summary: `Terraform Cloud agents ${report.mode} (${report.identity.source} identity).`,
     });
     return;
   }
@@ -124,6 +143,10 @@ export async function startControlPlaneServer(
     try {
       if (req.method === "GET" && url.pathname === "/api/health") {
         json(res, 200, { ok: true, busy });
+        return;
+      }
+      if (req.method === "GET" && url.pathname === "/api/aws-access") {
+        json(res, 200, runTfCloudAgents());
         return;
       }
       if (req.method === "GET" && url.pathname === "/api/presets") {

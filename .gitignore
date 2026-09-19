@@ -10,4 +10,9 @@ content/basin/*.json
 public/assets/course/**/*-raw.png
 coverage
 .vite
+terraform/.terraform
+terraform/**/generated.auto.tfvars.json
+terraform/**/terraform.tfvars.json
+terraform/**/*.tfstate
+terraform/**/*.tfstate.*
 node_modules/.tmp
