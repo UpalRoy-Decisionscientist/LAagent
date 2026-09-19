@@ -38,7 +38,7 @@ export function DiagnosticGateway({ challenges }: { challenges: DiagnosticChalle
         {submitted && (
           <p className={`mt-3 text-sm ${passed ? "text-emerald-700" : "text-amber-700"}`}>
             {passed
-              ? "You may skip the VPC primer and start at endpoint policy authoring."
+              ? "You may skip the prerequisite module and continue at the advanced lab."
               : `Need ${challenge.passThreshold - hits.length} more required signal(s): ${challenge.expectedSignals.join(", ")}.`}
           </p>
         )}

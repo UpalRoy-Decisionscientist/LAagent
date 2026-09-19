@@ -47,6 +47,30 @@
       "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
       "pillars": ["Security"],
       "text": "Protect data in transit and at rest. Use encryption with SSE-S3 or SSE-KMS. Redact account IDs, access keys, and secret keys from instructional screenshots. Prefer IAM roles over access keys for compute."
+    },
+    {
+      "id": "iam-roles",
+      "service": "IAM",
+      "title": "IAM roles and temporary credentials",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+      "pillars": ["Security"],
+      "text": "IAM roles provide temporary credentials to AWS services and users. Prefer roles for Lambda, EC2, and CI/CD instead of long-lived access keys. Enable MFA on the root user and do not use the root user for daily operations."
+    },
+    {
+      "id": "lambda-execution-role",
+      "service": "Lambda",
+      "title": "Lambda execution role",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+      "pillars": ["Security", "Operational Excellence"],
+      "text": "AWS Lambda runs code without provisioning servers. Each function has an execution role that grants least-privilege permissions such as CloudWatch Logs. Use Python runtimes, environment variables without secrets, and CloudWatch metrics for Errors and Duration."
+    },
+    {
+      "id": "ec2-fundamentals",
+      "service": "EC2",
+      "title": "Amazon EC2 instances and roles",
+      "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+      "pillars": ["Reliability", "Security"],
+      "text": "Amazon EC2 provides resizable compute. Attach an instance profile role rather than storing access keys on disk. Place instances in private subnets when they only need AWS API access."
     }
   ]
 }

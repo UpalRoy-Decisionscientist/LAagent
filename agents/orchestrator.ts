@@ -12,6 +12,8 @@ export interface OrchestratorOptions {
   mockServerOrigin: string;
   authStoragePath?: string;
   commit?: boolean;
+  chapters?: string[];
+  setPlan?: (plan: import("../shared/types.ts").CaptureStep[]) => void;
 }
 
 export async function runOrchestrator(options: OrchestratorOptions): Promise<CollaborationBasin> {
@@ -21,7 +23,7 @@ export async function runOrchestrator(options: OrchestratorOptions): Promise<Col
   };
 
   log("INGEST");
-  await runIngestionAgent(basin, options.sourcePath);
+  await runIngestionAgent(basin, options.sourcePath, options.chapters);
 
   log("GRAPH_AND_PRUNE");
   runKnowledgeGraphAgent(basin);
@@ -31,6 +33,7 @@ export async function runOrchestrator(options: OrchestratorOptions): Promise<Col
     moduleId: options.moduleId,
     mockServerOrigin: options.mockServerOrigin,
     authStoragePath: options.authStoragePath,
+    setPlan: options.setPlan,
   });
 
   log("RAG_AUDIT");

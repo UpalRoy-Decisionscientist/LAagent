@@ -1,15 +1,20 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
 import { auditStep } from "../agents/auditor.ts";
 import { buildLearningDag } from "../agents/knowledge-graph.ts";
 import { CollaborationBasin } from "../shared/basin.ts";
+import { buildCapturePlan } from "../shared/build-capture-plan.ts";
 import { DEFAULT_CAPTURE_PLAN } from "../shared/capture-plan.ts";
+import { extractObjectives, extractSafeCli } from "../shared/extract.ts";
 import kb from "../knowledge/aws-docs-kb.json";
 
+const excerpt = readFileSync("tests/fixtures/uday-excerpt.md", "utf8");
+
 describe("knowledge graph", () => {
-  it("builds an acyclic Bloom-tagged DAG from the lab source", () => {
+  it("builds an acyclic Bloom-tagged DAG from a short lab source", () => {
     const source = `
       Students will create a private Amazon S3 bucket, lock public access, place a sample
       workload in private subnets, and reach the bucket through a gateway VPC endpoint.
@@ -19,6 +24,17 @@ describe("knowledge graph", () => {
     expect(objectives.length).toBeGreaterThanOrEqual(4);
     expect(skipGates[0]?.passThreshold).toBe(3);
     expect(objectives.some((objective) => objective.bloom === "evaluate")).toBe(true);
+  });
+
+  it("parses Uday-style learning objectives and labs", () => {
+    const { title, objectives } = buildLearningDag(excerpt);
+    expect(title).toMatch(/IAM/);
+    expect(objectives[0]?.title).toMatch(/Explain/i);
+    expect(extractObjectives(excerpt).length).toBeGreaterThanOrEqual(5);
+    const plan = buildCapturePlan(excerpt, objectives);
+    expect(plan.length).toBeGreaterThanOrEqual(4);
+    expect(plan.every((step) => !/create-access-key/i.test(step.cliFallback ?? ""))).toBe(true);
+    expect(extractSafeCli(excerpt).some((command) => command.includes("create-role"))).toBe(true);
   });
 });
 

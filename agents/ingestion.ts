@@ -1,82 +1,79 @@
 import fs from "node:fs";
 import path from "node:path";
 import mammoth from "mammoth";
+import { execFileSync } from "node:child_process";
 import type { CollaborationBasin } from "../shared/basin.ts";
-import type { TechnicalTriplet } from "../shared/types.ts";
+import { collectSourceFiles, extractTriplets, pruneChapter } from "../shared/extract.ts";
 
-const AWS_SERVICES = [
-  "IAM",
-  "VPC",
-  "S3",
-  "EC2",
-  "Lambda",
-  "ECS",
-  "CloudWatch",
-  "CloudTrail",
-  "KMS",
-  "STS",
-];
-
-function stripBoilerplate(text: string): string {
-  return text
-    .replace(/\u00a0/g, " ")
-    .replace(/[\t ]+/g, " ")
-    .replace(/\n{3,}/g, "\n\n")
-    .replace(/^(confidential|draft|internal use only).*$/gim, "")
-    .trim();
+function isGitUrl(value: string): boolean {
+  return /^https?:\/\/github\.com\//i.test(value) || value.endsWith(".git");
 }
 
-function extractTriplets(text: string): TechnicalTriplet[] {
-  const sentences = text.split(/(?<=[.!?])\s+/);
-  const triplets: TechnicalTriplet[] = [];
-  for (const sentence of sentences) {
-    for (const service of AWS_SERVICES) {
-      if (new RegExp(`\\b${service}\\b`, "i").test(sentence)) {
-        const actionMatch = sentence.match(
-          /\b(create|attach|enable|restrict|verify|run|update|place|lock|grant|allow|confirm)\b/i,
-        );
-        triplets.push({
-          subject: "Learner",
-          action: (actionMatch?.[1] ?? "configure").toLowerCase(),
-          target: service,
-        });
-      }
-    }
+function materializeSource(sourcePath: string): string {
+  if (!isGitUrl(sourcePath)) {
+    return path.resolve(sourcePath);
   }
-  const unique = new Map<string, TechnicalTriplet>();
-  for (const triplet of triplets) {
-    unique.set(`${triplet.action}->${triplet.target}`, triplet);
+  const cache = path.join(process.cwd(), ".cache", "Uday_AWS");
+  if (!fs.existsSync(path.join(cache, ".git"))) {
+    fs.mkdirSync(path.dirname(cache), { recursive: true });
+    execFileSync(
+      "git",
+      ["clone", "--depth", "1", "--filter=blob:none", "--sparse", sourcePath, cache],
+      { stdio: "inherit" },
+    );
+    execFileSync(
+      "git",
+      [
+        "-C",
+        cache,
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        "/*.md",
+        "/aws-lambda-masterclass/README.md",
+        "/aws-lambda-masterclass/js/data/module-01-iam.js",
+        "/aws-lambda-masterclass/js/data/module-02-s3.js",
+        "/aws-lambda-masterclass/js/data/module-08-lambda.js",
+      ],
+      { stdio: "inherit" },
+    );
   }
-  return [...unique.values()];
+  return cache;
 }
 
-async function readSource(sourcePath: string): Promise<string> {
-  const ext = path.extname(sourcePath).toLowerCase();
-  const absolute = path.resolve(sourcePath);
-  if (!fs.existsSync(absolute)) {
-    throw new Error(`Source not found: ${absolute}`);
-  }
+async function readFileSource(filePath: string): Promise<string> {
+  const ext = path.extname(filePath).toLowerCase();
   if (ext === ".docx") {
-    const result = await mammoth.extractRawText({ path: absolute });
+    const result = await mammoth.extractRawText({ path: filePath });
     return result.value;
   }
   if (ext === ".pdf") {
-    throw new Error(
-      "PDF ingestion requires an explicit converter. Save as Markdown or DOCX for this pipeline.",
-    );
+    return "";
   }
-  return fs.readFileSync(absolute, "utf8");
+  return fs.readFileSync(filePath, "utf8");
 }
 
 export async function runIngestionAgent(
   basin: CollaborationBasin,
   sourcePath: string,
+  chapters?: string[],
 ): Promise<void> {
-  const raw = stripBoilerplate(await readSource(sourcePath));
-  const triplets = extractTriplets(raw);
+  const resolved = materializeSource(sourcePath);
+  const files = collectSourceFiles(resolved, chapters);
+  const chunks: string[] = [];
+  for (const file of files) {
+    const raw = await readFileSource(file);
+    if (!raw.trim()) continue;
+    chunks.push(`# SOURCE ${path.basename(file)}\n\n${pruneChapter(raw)}`);
+  }
+  const combined = chunks.join("\n\n---\n\n").replace(/\u00a0/g, " ").trim();
+  if (!combined) {
+    throw new Error("Ingestion produced empty text.");
+  }
+  const triplets = extractTriplets(combined);
   basin.update((state) => {
-    state.sourcePath = sourcePath;
-    state.rawText = raw;
+    state.sourcePath = resolved;
+    state.rawText = combined;
     state.triplets = triplets;
   });
   basin.post(
@@ -85,8 +82,12 @@ export async function runIngestionAgent(
       to: "knowledge-graph",
       gate: "INGEST",
       status: triplets.length ? "ok" : "fail",
-      summary: `Ingested ${path.basename(sourcePath)}; extracted ${triplets.length} dense triplets.`,
-      payload: { tripletCount: triplets.length, chars: raw.length },
+      summary: `Ingested ${files.length} source file(s) from ${path.basename(resolved)}; ${triplets.length} triplets after prune (${combined.length} chars).`,
+      payload: {
+        tripletCount: triplets.length,
+        chars: combined.length,
+        files: files.map((file) => path.basename(file)),
+      },
     },
     triplets.length ? "ok" : "fail",
   );

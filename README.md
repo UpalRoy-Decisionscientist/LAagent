@@ -33,12 +33,9 @@ The default hands-on path is a **high-fidelity AWS Console replica** so Cursor C
 ## Queue execution
 
 ```bash
-npm install
-npx playwright install chromium
-npm run pipeline -- --source materials/s3-vpc-lab.md --module s3-vpc-private-access
-npm test
-npm run build
-npm run dev
+npm run e2e:uday
 ```
+
+This clones (or reuses) [Uday_AWS](https://github.com/DeeptiShuklaProject/Uday_AWS), ingests IAM/S3/EC2/VPC/CloudWatch/Lambda chapters, runs every agent gate, captures 2x screenshots, and verifies the React lesson.
 
 Master prompt: `.cursorrules` and `docs/MASTER_PROMPT.md`.

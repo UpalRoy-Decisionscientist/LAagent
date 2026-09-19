@@ -18,4 +18,5 @@ jobs:
       - run: npx playwright install chromium --with-deps
       - run: npm test
       - run: npm run pipeline -- --source materials/s3-vpc-lab.md --module s3-vpc-private-access
+      - run: npm run e2e:uday
       - run: npm run build

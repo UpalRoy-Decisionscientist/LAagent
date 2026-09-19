@@ -123,6 +123,8 @@ export interface BasinState {
   assets?: VisualAsset[];
   audits?: AuditFinding[];
   skipGates?: DiagnosticChallenge[];
+  courseTitle?: string;
+  courseSummary?: string;
   manifest?: CourseManifest;
   composedFiles?: string[];
 }

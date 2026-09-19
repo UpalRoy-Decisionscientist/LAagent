@@ -54,12 +54,7 @@ function bm25(
     .sort((a, b) => b.score - a.score);
 }
 
-const FORBIDDEN_CLI = [
-  /aws\s+iam\s+create-access-key/i,
-  /AdministratorAccess/,
-  /AKIA[0-9A-Z]{16}/,
-  /aws_secret_access_key/i,
-];
+import { FORBIDDEN_CLI } from "../shared/curriculum.ts";
 
 export function auditStep(step: CaptureStep, documents: KbDocument[]): AuditFinding {
   const ranked = bm25(`${step.title} ${step.description} ${step.cliFallback ?? ""}`, documents);

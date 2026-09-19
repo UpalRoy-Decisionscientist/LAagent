@@ -36,9 +36,10 @@ export function composeManifest(basin: CollaborationBasin): CourseManifest {
 
   return {
     moduleId: state.moduleId,
-    title: "Private S3 Access from a VPC",
+    title: state.courseTitle ?? "AWS Academy Module",
     summary:
-      "Build a private path from multi-AZ subnets to Amazon S3 using a gateway VPC endpoint, least-privilege IAM, and CloudWatch verification.",
+      state.courseSummary ??
+      "Compiled from ingested curriculum sources with audited visual walkthroughs.",
     services: [...new Set(state.objectives?.flatMap((objective) => objective.services) ?? [])],
     tracks: ["beginner", "intermediate", "advanced"],
     objectives: state.objectives ?? [],

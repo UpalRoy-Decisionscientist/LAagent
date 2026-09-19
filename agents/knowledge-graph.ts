@@ -1,93 +1,8 @@
 import type { CollaborationBasin } from "../shared/basin.ts";
+import { buildCapturePlan } from "../shared/build-capture-plan.ts";
+import { AWS_SERVICES } from "../shared/curriculum.ts";
+import { extractObjectives, extractTitle } from "../shared/extract.ts";
 import type { DiagnosticChallenge, LearningObjective } from "../shared/types.ts";
-
-function unique<T>(items: T[]): T[] {
-  return [...new Set(items)];
-}
-
-export function buildLearningDag(rawText: string): {
-  objectives: LearningObjective[];
-  skipGates: DiagnosticChallenge[];
-} {
-  const skipGate: DiagnosticChallenge = {
-    id: "sg-vpc-endpoints",
-    prompt:
-      "Write a gateway endpoint policy that allows s3:GetObject only when aws:SourceVpce matches the lab endpoint, and explain why a NAT gateway is unnecessary for S3-only private workloads.",
-    expectedSignals: ["aws:SourceVpce", "gateway endpoint", "no NAT", "least privilege"],
-    passThreshold: 3,
-  };
-
-  const objectives: LearningObjective[] = [
-    {
-      id: "lo-iam-least-privilege",
-      title: "Author a least-privilege IAM role for private S3 reads",
-      bloom: "apply",
-      services: ["IAM", "S3"],
-      prerequisites: [],
-      track: "beginner",
-      triplets: [
-        { subject: "Learner", action: "create", target: "IAM" },
-        { subject: "IAM role", action: "allow", target: "S3" },
-      ],
-    },
-    {
-      id: "lo-vpc-private-subnets",
-      title: "Place workloads in multi-AZ private subnets",
-      bloom: "apply",
-      services: ["VPC"],
-      prerequisites: ["lo-iam-least-privilege"],
-      track: "beginner",
-      triplets: [{ subject: "Learner", action: "create", target: "VPC" }],
-    },
-    {
-      id: "lo-s3-private-bucket",
-      title: "Create a private encrypted S3 bucket with Block Public Access",
-      bloom: "apply",
-      services: ["S3"],
-      prerequisites: ["lo-iam-least-privilege"],
-      track: "beginner",
-      triplets: [
-        { subject: "Learner", action: "create", target: "S3" },
-        { subject: "Learner", action: "enable", target: "S3" },
-      ],
-    },
-    {
-      id: "lo-s3-gateway-endpoint",
-      title: "Route private subnet S3 traffic through a gateway VPC endpoint",
-      bloom: "analyze",
-      services: ["VPC", "S3"],
-      prerequisites: ["lo-vpc-private-subnets", "lo-s3-private-bucket"],
-      track: "intermediate",
-      skipGate,
-      triplets: [{ subject: "Learner", action: "create", target: "VPC" }],
-    },
-    {
-      id: "lo-verify-private-path",
-      title: "Verify GetObject over the private path with CloudWatch evidence",
-      bloom: "evaluate",
-      services: ["S3", "CloudWatch"],
-      prerequisites: ["lo-s3-gateway-endpoint"],
-      track: "advanced",
-      triplets: [
-        { subject: "Learner", action: "verify", target: "S3" },
-        { subject: "Learner", action: "confirm", target: "CloudWatch" },
-      ],
-    },
-  ];
-
-  const mentioned = unique(
-    objectives.flatMap((objective) =>
-      objective.services.filter((service) =>
-        new RegExp(`\\b${service}\\b`, "i").test(rawText),
-      ),
-    ),
-  );
-  if (mentioned.length < 2) {
-    throw new Error("Source does not mention enough AWS services to build a DAG.");
-  }
-
-  return { objectives, skipGates: [skipGate] };
-}
 
 function assertAcyclic(objectives: LearningObjective[]): void {
   const byId = new Map(objectives.map((objective) => [objective.id, objective]));
@@ -112,14 +27,75 @@ function assertAcyclic(objectives: LearningObjective[]): void {
   }
 }
 
+export function buildLearningDag(rawText: string): {
+  title: string;
+  summary: string;
+  objectives: LearningObjective[];
+  skipGates: DiagnosticChallenge[];
+} {
+  const title = extractTitle(rawText);
+  const parsed = extractObjectives(rawText);
+  const mentioned = AWS_SERVICES.filter((service) =>
+    new RegExp(`\\b${service.replace(" ", "\\s+")}\\b`, "i").test(rawText),
+  );
+  if (mentioned.length < 2 && parsed.length < 2) {
+    throw new Error("Source does not mention enough AWS services to build a DAG.");
+  }
+
+  const fallback = mentioned.slice(0, 6).map((service, index, list) => {
+    const bloom =
+      index === list.length - 1 ? "evaluate" : index < 2 ? "apply" : "analyze";
+    return {
+      id: `lo-${index + 1}-${service.toLowerCase().replace(/\s+/g, "-")}`,
+      title: `Apply ${service} from the ingested curriculum`,
+      bloom,
+      services: [service],
+      prerequisites: index
+        ? [`lo-${index}-${list[index - 1].toLowerCase().replace(/\s+/g, "-")}`]
+        : [],
+      track: bloom === "apply" ? "beginner" : bloom === "analyze" ? "intermediate" : "advanced",
+      triplets: [{ subject: "Learner" as const, action: "configure", target: service }],
+    } satisfies LearningObjective;
+  });
+
+  const objectives = parsed.length >= 2 ? parsed.slice(0, 10) : fallback;
+
+  const skipGate: DiagnosticChallenge = {
+    id: "sg-source-curriculum",
+    prompt: `Without repeating the beginner labs, explain a production-ready ${mentioned[0] ?? "IAM"} control from this curriculum and name the AWS service it depends on.`,
+    expectedSignals: [
+      mentioned[0] ?? "IAM",
+      "least privilege",
+      mentioned[1] ?? "CloudWatch",
+      "role",
+    ],
+    passThreshold: 3,
+  };
+
+  if (objectives[2]) {
+    objectives[2] = { ...objectives[2], skipGate };
+  }
+
+  return {
+    title,
+    summary: `Curriculum compiled from ${title}. Services: ${mentioned.slice(0, 8).join(", ")}.`,
+    objectives,
+    skipGates: [skipGate],
+  };
+}
+
 export function runKnowledgeGraphAgent(basin: CollaborationBasin): void {
   basin.requireGate("INGEST");
   const state = basin.read();
-  const { objectives, skipGates } = buildLearningDag(state.rawText ?? "");
-  assertAcyclic(objectives);
+  const graph = buildLearningDag(state.rawText ?? "");
+  assertAcyclic(graph.objectives);
+  const capturePlan = buildCapturePlan(state.rawText ?? "", graph.objectives);
   basin.update((next) => {
-    next.objectives = objectives;
-    next.skipGates = skipGates;
+    next.objectives = graph.objectives;
+    next.skipGates = graph.skipGates;
+    next.capturePlan = capturePlan;
+    next.courseTitle = graph.title;
+    next.courseSummary = graph.summary;
   });
   basin.post(
     {
@@ -127,10 +103,11 @@ export function runKnowledgeGraphAgent(basin: CollaborationBasin): void {
       to: "playwright-runner",
       gate: "GRAPH_AND_PRUNE",
       status: "ok",
-      summary: `Built ${objectives.length} Bloom-tagged learning objectives with ${skipGates.length} skip gate(s).`,
+      summary: `Built ${graph.objectives.length} Bloom-tagged objectives and ${capturePlan.length} visual steps for ${graph.title}.`,
       payload: {
-        objectiveIds: objectives.map((objective) => objective.id),
-        skipGates,
+        objectiveIds: graph.objectives.map((objective) => objective.id),
+        skipGates: graph.skipGates,
+        stepCount: capturePlan.length,
       },
     },
     "ok",

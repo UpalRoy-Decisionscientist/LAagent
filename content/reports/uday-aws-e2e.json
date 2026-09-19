@@ -1,0 +1,115 @@
+{
+  "source": "/tmp/Uday_AWS",
+  "title": "AWS IAM (Identity & Access Management)",
+  "gates": {
+    "INGEST": "ok",
+    "GRAPH_AND_PRUNE": "ok",
+    "PLAYWRIGHT_CAPTURE": "ok",
+    "RAG_AUDIT": "ok",
+    "REACT_COMPOSE": "ok",
+    "GIT_COMMIT": "ok"
+  },
+  "agents": [
+    {
+      "gate": "INGEST",
+      "from": "ingestion-kg-sentinel",
+      "status": "ok",
+      "summary": "Ingested 6 source file(s) from Uday_AWS; 21 triplets after prune (75817 chars)."
+    },
+    {
+      "gate": "GRAPH_AND_PRUNE",
+      "from": "knowledge-graph",
+      "status": "ok",
+      "summary": "Built 8 Bloom-tagged objectives and 8 visual steps for AWS IAM (Identity & Access Management)."
+    },
+    {
+      "gate": "PLAYWRIGHT_CAPTURE",
+      "from": "playwright-runner",
+      "status": "ok",
+      "summary": "Captured 8 Retina 2x walkthrough frames."
+    },
+    {
+      "gate": "RAG_AUDIT",
+      "from": "pedagogical-auditor",
+      "status": "ok",
+      "summary": "All 8 steps passed BM25 Wiki-RAG and safety scans."
+    },
+    {
+      "gate": "REACT_COMPOSE",
+      "from": "course-composer",
+      "status": "ok",
+      "summary": "Wrote lesson manifest with 8 audited visual steps (rigor 99)."
+    },
+    {
+      "gate": "GIT_COMMIT",
+      "from": "git-release",
+      "status": "ok",
+      "summary": "Prepared conventional commit message for uday-aws-iam-s3-lambda."
+    }
+  ],
+  "rigor": 99,
+  "steps": [
+    {
+      "title": "Building a Production File Processing Lambda Function",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-1-lab-1-building-a-production-file-processing-lamb.webp",
+      "auditPassed": true,
+      "score": 100
+    },
+    {
+      "title": "Verify Building a Production File Processing Lambda Function",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-2-lab-1-building-a-production-file-processing-lamb-verify.webp",
+      "auditPassed": true,
+      "score": 100
+    },
+    {
+      "title": "Execute iam lab command",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-3-aws-iam-create-group-group-name-develo.webp",
+      "auditPassed": true,
+      "score": 100
+    },
+    {
+      "title": "Execute iam lab command",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-4-aws-iam-attach-group-policy.webp",
+      "auditPassed": true,
+      "score": 100
+    },
+    {
+      "title": "Execute iam lab command",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-5-aws-iam-create-role.webp",
+      "auditPassed": true,
+      "score": 88
+    },
+    {
+      "title": "Execute iam lab command",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-6-aws-iam-attach-role-policy.webp",
+      "auditPassed": true,
+      "score": 100
+    },
+    {
+      "title": "Execute iam lab command",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-7-aws-iam-create-instance-profile-instan.webp",
+      "auditPassed": true,
+      "score": 100
+    },
+    {
+      "title": "Execute iam lab command",
+      "imageSrc": "/assets/course/uday-aws-iam-s3-lambda/step-8-aws-iam-add-role-to-instance-profile.webp",
+      "auditPassed": true,
+      "score": 100
+    }
+  ],
+  "services": [
+    "IAM",
+    "STS"
+  ],
+  "objectives": [
+    "Explain how IAM works — users, groups, roles, and policies.",
+    "Create IAM users, groups, and roles with least-privilege permissions.",
+    "Write custom IAM policies using JSON policy documents.",
+    "Configure MFA, password policies, and account security settings.",
+    "Implement cross-account access using IAM roles and STS.",
+    "Design a production IAM strategy for a multi-team organization.",
+    "Troubleshoot AccessDenied errors, policy conflicts, and permission issues.",
+    "Answer interview questions about IAM, security, and access management."
+  ]
+}
