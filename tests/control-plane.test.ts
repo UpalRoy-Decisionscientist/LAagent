@@ -13,6 +13,24 @@ describe("agent control plane", () => {
       expect(aws.source).toContain("terraform-aws-tf-cloud-agents");
       expect(aws.mode).toBe("dry-run");
 
+      const tfc = await fetch(`${server.origin}/api/runs`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ presetId: "tf-cloud-agents" }),
+      });
+      expect(tfc.status).toBe(202);
+      const tfcRun = (await tfc.json()) as { id: string };
+      let tfcStatus = { status: "queued", result: { mode: "" } as { mode?: string } };
+      for (let attempt = 0; attempt < 40; attempt += 1) {
+        tfcStatus = (await fetch(`${server.origin}/api/runs/${tfcRun.id}`).then((response) =>
+          response.json(),
+        )) as typeof tfcStatus;
+        if (tfcStatus.status === "ok" || tfcStatus.status === "fail") break;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      expect(tfcStatus.status).toBe("ok");
+      expect(tfcStatus.result.mode).toBe("dry-run");
+
       const created = await fetch(`${server.origin}/api/runs`, {
         method: "POST",
         headers: { "content-type": "application/json" },

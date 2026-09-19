@@ -4,6 +4,7 @@ import { localBin } from "../shared/process.ts";
 const tsx = localBin("tsx");
 
 const stages: Array<{ name: string; args: string[] }> = [
+  { name: "HCP Terraform AWS agents", args: ["scripts/run-tf-cloud-agents.ts"] },
   {
     name: "s3-vpc pipeline",
     args: [
