@@ -6,12 +6,17 @@
   "description": "Multi-agent AWS Academy course builder: ingest, capture, audit, compose, and release.",
   "scripts": {
     "dev": "vite",
+    "lab": "tsx scripts/dev-lab.ts",
+    "control": "tsx scripts/control-plane-server.ts",
     "build": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
     "test": "vitest run",
     "pipeline": "tsx scripts/run-pipeline.ts",
+    "e2e": "tsx scripts/e2e.ts",
     "e2e:uday": "tsx scripts/e2e-uday-aws.ts",
     "e2e:uday:console": "tsx scripts/uday-aws-console-login-e2e.ts",
+    "e2e:ui": "tsx scripts/verify-control-room.ts",
+    "aws:agents": "tsx scripts/run-tf-cloud-agents.ts",
     "capture": "tsx scripts/playwright-recorder.ts",
     "typecheck": "tsc -p tsconfig.app.json --pretty false --noEmit && tsc -p tsconfig.node.json --pretty false --noEmit"
   },

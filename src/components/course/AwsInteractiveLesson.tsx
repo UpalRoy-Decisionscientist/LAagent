@@ -27,7 +27,9 @@ export function AwsInteractiveLesson({ title, summary, rigor, services, steps }:
           <span className="text-xs font-semibold tracking-wider text-blue-700 uppercase">
             AWS Academy Certified Guide
           </span>
-          <h1 className="text-2xl font-bold text-slate-900 mt-1">{title}</h1>
+          <h1 data-testid="lesson-title" className="text-2xl font-bold text-slate-900 mt-1">
+            {title}
+          </h1>
           <p className="text-sm text-slate-600 mt-2 leading-relaxed">{summary}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {services.map((service) => (
@@ -49,6 +51,7 @@ export function AwsInteractiveLesson({ title, summary, rigor, services, steps }:
             <button
               key={step.id}
               type="button"
+              data-testid="lesson-step"
               onClick={() => setActiveStep(idx)}
               className={`w-full text-left p-3.5 rounded-lg border transition-all flex items-center justify-between ${
                 activeStep === idx

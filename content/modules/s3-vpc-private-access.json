@@ -1,11 +1,11 @@
 {
   "moduleId": "s3-vpc-private-access",
-  "title": "Private S3 Access from a VPC",
-  "summary": "Build a private path from multi-AZ subnets to Amazon S3 using a gateway VPC endpoint, least-privilege IAM, and CloudWatch verification.",
+  "title": "Private S3 access from a VPC (AWS Academy lab)",
+  "summary": "Curriculum compiled from Private S3 access from a VPC (AWS Academy lab). Services: IAM, VPC, S3, CloudWatch.",
   "services": [
     "IAM",
-    "S3",
     "VPC",
+    "S3",
     "CloudWatch"
   ],
   "tracks": [
@@ -15,39 +15,33 @@
   ],
   "objectives": [
     {
-      "id": "lo-iam-least-privilege",
-      "title": "Author a least-privilege IAM role for private S3 reads",
+      "id": "lo-1-create",
+      "title": "Create an IAM lab role that can only list and read a named bucket. Do not attach AdministratorAccess.",
       "bloom": "apply",
       "services": [
-        "IAM",
-        "S3"
+        "IAM"
       ],
       "prerequisites": [],
-      "track": "beginner",
+      "track": "intermediate",
       "triplets": [
         {
           "subject": "Learner",
           "action": "create",
           "target": "IAM"
-        },
-        {
-          "subject": "IAM role",
-          "action": "allow",
-          "target": "S3"
         }
       ]
     },
     {
-      "id": "lo-vpc-private-subnets",
-      "title": "Place workloads in multi-AZ private subnets",
+      "id": "lo-2-create",
+      "title": "Create a VPC with two private subnets in different Availability Zones. Do not attach an internet gateway route to those subnets.",
       "bloom": "apply",
       "services": [
         "VPC"
       ],
       "prerequisites": [
-        "lo-iam-least-privilege"
+        "lo-1-create"
       ],
-      "track": "beginner",
+      "track": "intermediate",
       "triplets": [
         {
           "subject": "Learner",
@@ -57,82 +51,106 @@
       ]
     },
     {
-      "id": "lo-s3-private-bucket",
-      "title": "Create a private encrypted S3 bucket with Block Public Access",
+      "id": "lo-3-create",
+      "title": "Create an S3 bucket with Block Public Access enabled and default encryption.",
       "bloom": "apply",
       "services": [
         "S3"
       ],
       "prerequisites": [
-        "lo-iam-least-privilege"
+        "lo-2-create"
       ],
-      "track": "beginner",
+      "track": "intermediate",
       "triplets": [
         {
           "subject": "Learner",
           "action": "create",
           "target": "S3"
-        },
-        {
-          "subject": "Learner",
-          "action": "enable",
-          "target": "S3"
         }
-      ]
+      ],
+      "skipGate": {
+        "id": "sg-source-curriculum",
+        "prompt": "Without repeating the beginner labs, explain a production-ready IAM control from this curriculum and name the AWS service it depends on.",
+        "expectedSignals": [
+          "IAM",
+          "least privilege",
+          "VPC",
+          "role"
+        ],
+        "passThreshold": 3
+      }
     },
     {
-      "id": "lo-s3-gateway-endpoint",
-      "title": "Route private subnet S3 traffic through a gateway VPC endpoint",
-      "bloom": "analyze",
+      "id": "lo-4-create",
+      "title": "Create a gateway VPC endpoint for S3 and update the private route tables.",
+      "bloom": "apply",
       "services": [
         "VPC",
         "S3"
       ],
       "prerequisites": [
-        "lo-vpc-private-subnets",
-        "lo-s3-private-bucket"
+        "lo-3-create"
       ],
       "track": "intermediate",
-      "skipGate": {
-        "id": "sg-vpc-endpoints",
-        "prompt": "Write a gateway endpoint policy that allows s3:GetObject only when aws:SourceVpce matches the lab endpoint, and explain why a NAT gateway is unnecessary for S3-only private workloads.",
-        "expectedSignals": [
-          "aws:SourceVpce",
-          "gateway endpoint",
-          "no NAT",
-          "least privilege"
-        ],
-        "passThreshold": 3
-      },
       "triplets": [
         {
           "subject": "Learner",
           "action": "create",
           "target": "VPC"
+        },
+        {
+          "subject": "Learner",
+          "action": "create",
+          "target": "S3"
         }
       ]
     },
     {
-      "id": "lo-verify-private-path",
-      "title": "Verify GetObject over the private path with CloudWatch evidence",
-      "bloom": "evaluate",
+      "id": "lo-5-attach",
+      "title": "Attach an endpoint policy that allows s3:GetObject only from the lab VPC.",
+      "bloom": "apply",
+      "services": [
+        "VPC",
+        "S3"
+      ],
+      "prerequisites": [
+        "lo-4-create"
+      ],
+      "track": "intermediate",
+      "triplets": [
+        {
+          "subject": "Learner",
+          "action": "attach",
+          "target": "VPC"
+        },
+        {
+          "subject": "Learner",
+          "action": "attach",
+          "target": "S3"
+        }
+      ]
+    },
+    {
+      "id": "lo-6-from",
+      "title": "From a private instance, run aws s3 cp and confirm the object download. Check CloudWatch request metrics.",
+      "bloom": "apply",
       "services": [
         "S3",
         "CloudWatch"
       ],
       "prerequisites": [
-        "lo-s3-gateway-endpoint"
+        "lo-5-attach"
       ],
-      "track": "advanced",
+      "track": "intermediate",
       "triplets": [
         {
           "subject": "Learner",
-          "action": "verify",
+          "action": "from",
           "target": "S3"
         },
         {
           "subject": "Learner",
-          "action": "confirm",
+          "action": "from",
           "target": "CloudWatch"
         }
       ]
@@ -151,9 +169,9 @@
       "auditPassed": true,
       "academicRigorScore": 100,
       "citations": [
-        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege",
-        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
-        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege"
       ]
     },
     {
@@ -168,9 +186,9 @@
       "auditPassed": true,
       "academicRigorScore": 100,
       "citations": [
-        "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
-        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege",
-        "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+        "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html"
       ]
     },
     {
@@ -188,7 +206,7 @@
       "citations": [
         "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
         "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
-        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html"
       ]
     },
     {
@@ -205,7 +223,7 @@
       "citations": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html",
         "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
-        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html"
+        "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html"
       ]
     },
     {
@@ -255,24 +273,24 @@
       "academicRigorScore": 100,
       "citations": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html",
-        "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+        "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
         "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
       ]
     }
   ],
   "skipGates": [
     {
-      "id": "sg-vpc-endpoints",
-      "prompt": "Write a gateway endpoint policy that allows s3:GetObject only when aws:SourceVpce matches the lab endpoint, and explain why a NAT gateway is unnecessary for S3-only private workloads.",
+      "id": "sg-source-curriculum",
+      "prompt": "Without repeating the beginner labs, explain a production-ready IAM control from this curriculum and name the AWS service it depends on.",
       "expectedSignals": [
-        "aws:SourceVpce",
-        "gateway endpoint",
-        "no NAT",
-        "least privilege"
+        "IAM",
+        "least privilege",
+        "VPC",
+        "role"
       ],
       "passThreshold": 3
     }
   ],
   "academicRigorScore": 100,
-  "generatedAt": "2026-09-19T13:11:08.330Z"
+  "generatedAt": "2026-09-19T15:08:21.275Z"
 }

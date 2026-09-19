@@ -20,12 +20,19 @@ export function runGitReleaseAgent(
     "scripts",
     "agents",
     "knowledge",
-    "materials",
+    "terraform",
   ];
 
+  let summary = `Prepared conventional commit message for ${state.moduleId}.`;
   if (options.commit) {
-    git(["add", ...files]);
-    git(["commit", "-m", message]);
+    git(["add", "--", ...files]);
+    const staged = git(["diff", "--cached", "--name-only"]);
+    if (!staged) {
+      summary = `No curriculum file changes to commit for ${state.moduleId}.`;
+    } else {
+      git(["commit", "-m", message]);
+      summary = `Created conventional commit for ${state.moduleId}.`;
+    }
   }
 
   basin.post(
@@ -34,9 +41,7 @@ export function runGitReleaseAgent(
       to: "orchestrator",
       gate: "GIT_COMMIT",
       status: "ok",
-      summary: options.commit
-        ? `Created conventional commit for ${state.moduleId}.`
-        : `Prepared conventional commit message for ${state.moduleId}.`,
+      summary,
       payload: { message, files },
     },
     "ok",
