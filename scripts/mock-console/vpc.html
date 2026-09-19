@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>VPC subnets | AWS Console (lab replica)</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot active">VPC</div>
+        <div class="dot">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Academy Lab Console</span></div>
+          <div class="account">Account 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="navcrumbs">VPC &gt; Subnets</div>
+          <div class="card" data-capture="vpc-subnets">
+            <h1>Private subnets in lab-vpc</h1>
+            <p class="lead">CIDR 10.20.0.0/16. No internet gateway default route on private tables.</p>
+            <table>
+              <thead>
+                <tr><th>Name</th><th>Subnet ID</th><th>AZ</th><th>CIDR</th><th>Route to IGW</th><th>Tier</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>lab-private-a</td><td>subnet-0a1b2c3d</td><td>us-east-1a</td><td>10.20.1.0/24</td><td>None</td>
+                  <td><span class="pill private">private</span></td>
+                </tr>
+                <tr>
+                  <td>lab-private-b</td><td>subnet-0e4f5a6b</td><td>us-east-1b</td><td>10.20.2.0/24</td><td>None</td>
+                  <td><span class="pill private">private</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

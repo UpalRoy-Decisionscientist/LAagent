@@ -1,0 +1,12 @@
+{
+  "moduleId": "s3-vpc-private-access",
+  "title": "Private S3 Access from a VPC",
+  "summary": "Placeholder replaced by the pipeline composer.",
+  "services": ["IAM", "VPC", "S3", "CloudWatch"],
+  "tracks": ["beginner", "intermediate", "advanced"],
+  "objectives": [],
+  "steps": [],
+  "skipGates": [],
+  "academicRigorScore": 0,
+  "generatedAt": "1970-01-01T00:00:00.000Z"
+}

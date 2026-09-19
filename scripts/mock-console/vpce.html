@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Create VPC endpoint | AWS Console (lab replica)</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot active">VPC</div>
+        <div class="dot">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Academy Lab Console</span></div>
+          <div class="account">Account 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="navcrumbs">VPC &gt; Endpoints &gt; Create endpoint</div>
+          <div class="card" data-capture="vpce">
+            <h1>Create gateway endpoint for Amazon S3</h1>
+            <div class="grid">
+              <div>
+                <label>Service</label>
+                <div class="field">com.amazonaws.us-east-1.s3</div>
+                <label style="margin-top:16px">Type</label>
+                <div class="field">Gateway</div>
+                <label style="margin-top:16px">Route tables</label>
+                <div class="field">rtb-private-a, rtb-private-b</div>
+              </div>
+              <div data-highlight="policy">
+                <label>Endpoint policy</label>
+                <textarea rows="12">{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": ["s3:GetObject", "s3:ListBucket"],
+    "Resource": [
+      "arn:aws:s3:::academy-lab-artifacts",
+      "arn:aws:s3:::academy-lab-artifacts/*"
+    ],
+    "Condition": {
+      "StringEquals": { "aws:SourceVpc": "vpc-lab" }
+    }
+  }]
+}</textarea>
+              </div>
+            </div>
+            <p style="margin-top:18px"><button class="btn">Create endpoint</button></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

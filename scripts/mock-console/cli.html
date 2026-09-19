@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Private CLI verification | AWS Console (lab replica)</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot">VPC</div>
+        <div class="dot active">S3</div>
+        <div class="dot">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>Academy Lab Console</span></div>
+          <div class="account">Account 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="card" data-capture="cli">
+            <h1>Session Manager · i-0labprivate</h1>
+            <p class="lead">Private subnet instance. Public IPv4: none. Default route: S3 prefix list via vpce-0labendpoint.</p>
+            <pre class="terminal">ubuntu@i-0labprivate:~$ aws sts get-caller-identity
+{
+  "UserId": "AROAXXXXXXXXEXAMPLE:i-0labprivate",
+  "Account": "1234-5678-9012",
+  "Arn": "arn:aws:sts::1234-5678-9012:assumed-role/academy-s3-reader/i-0labprivate"
+}
+ubuntu@i-0labprivate:~$ aws s3 cp s3://academy-lab-artifacts/readme.txt /tmp/readme.txt
+download: s3://academy-lab-artifacts/readme.txt to /tmp/readme.txt
+ubuntu@i-0labprivate:~$ curl -s http://checkip.amazonaws.com
+curl: (7) Failed to connect to checkip.amazonaws.com port 80: Network is unreachable</pre>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
