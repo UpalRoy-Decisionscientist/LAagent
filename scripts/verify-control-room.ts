@@ -26,16 +26,24 @@ try {
   await page.getByTestId("nav-control").waitFor();
   await page.locator("select").selectOption("uday-excerpt");
   await page.getByTestId("run-all-agents").click();
-  await page.getByTestId("gate-INGEST").filter({ hasText: "ok" }).waitFor({ timeout: 60_000 });
-  try {
-    await page.getByTestId("gate-GIT_COMMIT").filter({ hasText: "ok" }).waitFor({ timeout: 90_000 });
-  } catch (error) {
-    const log = await page.locator("ol").innerText();
-    throw new Error(`Pipeline did not finish: ${(error as Error).message}\n${log}`);
+  let latest: { status: string; error?: string } | undefined;
+  for (let attempt = 0; attempt < 150; attempt += 1) {
+    const payload = (await fetch(`${controlOrigin}/api/runs`).then((response) => response.json())) as {
+      runs: Array<{ status: string; error?: string }>;
+    };
+    latest = payload.runs[0];
+    if (latest?.status === "fail") {
+      throw new Error(latest.error ?? "Control-plane run failed.");
+    }
+    if (latest?.status === "ok") break;
+    await page.waitForTimeout(400);
   }
-  if (await page.getByTestId("gate-INGEST").filter({ hasText: "fail" }).count()) {
-    throw new Error("Ingest gate failed in the control room.");
+  if (latest?.status !== "ok") {
+    throw new Error("Control-plane run did not reach ok.");
   }
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.getByTestId("gate-INGEST").filter({ hasText: "ok" }).waitFor({ timeout: 15_000 });
+  await page.getByTestId("gate-GIT_COMMIT").filter({ hasText: "ok" }).waitFor({ timeout: 15_000 });
   fs.mkdirSync("public/assets/course/ui-uday-excerpt", { recursive: true });
   await page.screenshot({
     path: "public/assets/course/ui-uday-excerpt/control-room-proof.png",

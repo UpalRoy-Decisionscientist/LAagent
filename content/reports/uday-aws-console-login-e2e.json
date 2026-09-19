@@ -7,7 +7,7 @@
     "user": "academy-operator"
   },
   "notes": [
-    "Reached live AWS sign-in (Amazon Web Services Sign-In at https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fus-east-1.console.aws.amazon.com%2Flambda%2Fhome%3Fca-oauth-flow-id%3D0ada%26hashArgs%3D%2523%26isauthcode%3Dtrue%26oauthStart%3D1789829778078%26region%3Dus-east-1%26state%3DhashArgsFromTB_us-east-1_f0f4c5ffab22f7af&client_id=arn%3Aaws%3Asignin%3A%3A%3Aconsole%2Flambda&forceMobileApp=0&oauth_region=us-east-1&code_challenge=aUpJuHKwOm_VzQQfIu3yrpqUteuXYXv1myJIYTgdGAU&code_challenge_method=SHA-256).",
+    "Reached live AWS sign-in (Amazon Web Services Sign-In at https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fus-east-1.console.aws.amazon.com%2Flambda%2Fhome%3Fca-oauth-flow-id%3D5fa0%26hashArgs%3D%2523%26isauthcode%3Dtrue%26oauthStart%3D1789830482725%26region%3Dus-east-1%26state%3DhashArgsFromTB_us-east-1_6f2478b0252d7740&client_id=arn%3Aaws%3Asignin%3A%3A%3Aconsole%2Flambda&forceMobileApp=0&oauth_region=us-east-1&code_challenge=Va987VAfX54GYii1n_rnpR0hlP3soe0KnTLVYyqh7ZU&code_challenge_method=SHA-256).",
     "Live AWS Console login not executed: set AWS_CONSOLE_ACCOUNT_ID, AWS_CONSOLE_USERNAME, AWS_CONSOLE_PASSWORD, and AWS_E2E_LIVE=1 for an operator-owned account."
   ],
   "assets": [
@@ -17,7 +17,7 @@
       "webpPath": "/assets/course/uday-lambda-console-login/step-1-live-aws-signin.webp",
       "width": 3840,
       "height": 2160,
-      "bytes": 185852,
+      "bytes": 168268,
       "caption": "Live AWS Sign-In endpoint reachable from Playwright."
     },
     {

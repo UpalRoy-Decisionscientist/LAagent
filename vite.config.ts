@@ -10,6 +10,14 @@ export default defineConfig({
     proxy: {
       "/api": process.env.CONTROL_ORIGIN ?? "http://127.0.0.1:8787",
     },
+    watch: {
+      ignored: [
+        "**/src/generated/**",
+        "**/content/**",
+        "**/public/assets/**",
+        "**/.cache/**",
+      ],
+    },
   },
   preview: {
     host: "127.0.0.1",

@@ -44,6 +44,18 @@ export function AgentControlRoom() {
   );
 
   useEffect(() => {
+    const stored = sessionStorage.getItem("control-run-id");
+    if (!stored) return;
+    void api<ControlRun>(`/api/runs/${stored}`)
+      .then(setRun)
+      .catch(() => sessionStorage.removeItem("control-run-id"));
+  }, []);
+
+  useEffect(() => {
+    if (run?.id) sessionStorage.setItem("control-run-id", run.id);
+  }, [run?.id]);
+
+  useEffect(() => {
     if (!run?.id) return;
     if (run.status === "ok" || run.status === "fail") return;
     const timer = window.setInterval(() => {
