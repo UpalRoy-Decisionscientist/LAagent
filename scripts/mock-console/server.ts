@@ -123,8 +123,10 @@ export async function startMockConsoleServer(
   });
 
   await new Promise<void>((resolve) => server.listen(port, "127.0.0.1", resolve));
+  const address = server.address();
+  const actualPort = typeof address === "object" && address ? address.port : port;
   return {
-    origin: `http://127.0.0.1:${port}`,
+    origin: `http://127.0.0.1:${actualPort}`,
     setPlan: (next) => {
       plan = next;
     },

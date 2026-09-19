@@ -41,4 +41,11 @@ npm run e2e:uday:console
 
 `e2e:uday:console` is the Playwright **IAM login** test for Uday Module 08 Lab 1 (`enterprise-image-processor`): it reaches live `console.aws.amazon.com`, then signs in as an IAM user (root disabled) and captures the create-function / success / CloudWatch frames. Live authenticated sessions require operator-owned `AWS_CONSOLE_*` plus `AWS_E2E_LIVE=1`; CI uses the lab replica login.
 
-Master prompt: `.cursorrules` and `docs/MASTER_PROMPT.md`.
+Open the test UI (API + Vite together):
+
+```bash
+npm run lab
+```
+
+Then visit http://127.0.0.1:5173 — **Agent test UI** runs ingestion, knowledge graph, Playwright, Wiki-RAG, composer, and git release. **Lesson preview** shows the last composed module.
+
