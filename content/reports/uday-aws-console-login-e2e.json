@@ -1,0 +1,69 @@
+{
+  "moduleId": "uday-lambda-console-login",
+  "udayLab": "Module 08 Lab 1 — enterprise-image-processor",
+  "login": {
+    "identity": "IAM user",
+    "rootDisabled": true,
+    "user": "academy-operator"
+  },
+  "notes": [
+    "Reached live AWS sign-in (Amazon Web Services Sign-In at https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fus-east-1.console.aws.amazon.com%2Flambda%2Fhome%3Fca-oauth-flow-id%3D12e1%26hashArgs%3D%2523%26isauthcode%3Dtrue%26oauthStart%3D1789828802930%26region%3Dus-east-1%26state%3DhashArgsFromTB_us-east-1_c895aba97920280d&client_id=arn%3Aaws%3Asignin%3A%3A%3Aconsole%2Flambda&forceMobileApp=0&oauth_region=us-east-1&code_challenge=DRuLksZ6gKP_EtS5BTx4vhrlHtAagtlMQTaqRedZKrg&code_challenge_method=SHA-256).",
+    "Live AWS Console login not executed: set AWS_CONSOLE_ACCOUNT_ID, AWS_CONSOLE_USERNAME, AWS_CONSOLE_PASSWORD, and AWS_E2E_LIVE=1 for an operator-owned account."
+  ],
+  "assets": [
+    {
+      "stepIndex": 1,
+      "slug": "live-aws-signin",
+      "webpPath": "/assets/course/uday-lambda-console-login/step-1-live-aws-signin.webp",
+      "width": 3840,
+      "height": 2160,
+      "bytes": 195892,
+      "caption": "Live AWS Sign-In endpoint reachable from Playwright."
+    },
+    {
+      "stepIndex": 2,
+      "slug": "iam-signin-blank",
+      "webpPath": "/assets/course/uday-lambda-console-login/step-2-iam-signin-blank.webp",
+      "width": 840,
+      "height": 1256,
+      "bytes": 41852,
+      "caption": "IAM user sign-in form before credentials are entered."
+    },
+    {
+      "stepIndex": 3,
+      "slug": "console-home-authenticated",
+      "webpPath": "/assets/course/uday-lambda-console-login/step-3-console-home-authenticated.webp",
+      "width": 2960,
+      "height": 556,
+      "bytes": 33196,
+      "caption": "Authenticated AWS Console home after IAM user login."
+    },
+    {
+      "stepIndex": 4,
+      "slug": "lambda-create-uday-lab",
+      "webpPath": "/assets/course/uday-lambda-console-login/step-4-lambda-create-uday-lab.webp",
+      "width": 2960,
+      "height": 918,
+      "bytes": 68442,
+      "caption": "Uday Module 08 Lab 1: create enterprise-image-processor before submit."
+    },
+    {
+      "stepIndex": 5,
+      "slug": "lambda-function-created",
+      "webpPath": "/assets/course/uday-lambda-console-login/step-5-lambda-function-created.webp",
+      "width": 2960,
+      "height": 924,
+      "bytes": 64962,
+      "caption": "Lambda function created with redacted ARN."
+    },
+    {
+      "stepIndex": 6,
+      "slug": "lambda-cloudwatch-logs",
+      "webpPath": "/assets/course/uday-lambda-console-login/step-6-lambda-cloudwatch-logs.webp",
+      "width": 2960,
+      "height": 886,
+      "bytes": 59062,
+      "caption": "CloudWatch logs verifying INIT/INVOKE without secrets."
+    }
+  ]
+}

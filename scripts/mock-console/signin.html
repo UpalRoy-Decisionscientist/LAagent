@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Amazon Web Services Sign In</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="signin-wrap">
+      <form class="signin-card" id="aws-signin" data-capture="signin" autocomplete="off">
+        <div class="brand" style="margin-bottom:12px">AWS <span>Sign In</span></div>
+        <h1>Sign in to the Console</h1>
+        <p class="lead">IAM user sign-in for the Uday AWS Lambda lab. Root user is disabled for daily work.</p>
+        <div class="radio-row">
+          <label><input type="radio" name="identity" value="root" disabled /> Root user</label>
+          <label><input type="radio" name="identity" value="iam" checked /> IAM user</label>
+        </div>
+        <label for="account">Account ID</label>
+        <input class="field" id="account" name="account" value="123456789012" />
+        <label for="username" style="margin-top:12px">IAM user name</label>
+        <input class="field" id="username" name="username" />
+        <label for="password" style="margin-top:12px">Password</label>
+        <input class="field" id="password" name="password" type="password" />
+        <p class="error" id="error"></p>
+        <button class="btn" id="signin_button" type="submit">Sign in</button>
+        <p class="lead" style="margin-top:16px;font-size:12px">MFA required in production. This lab replica accepts only the operator IAM user, never access keys.</p>
+      </form>
+    </div>
+    <script>
+      const params = new URLSearchParams(location.search);
+      document.getElementById("aws-signin").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const account = document.getElementById("account").value.replace(/-/g, "");
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const expectedUser = params.get("user") || "academy-operator";
+        const expectedPass = params.get("lab") || "LabOnly!NeverProduction";
+        if (account !== "123456789012" || username !== expectedUser || password !== expectedPass) {
+          document.getElementById("error").textContent = "Authentication failed. Use the lab IAM user, not root.";
+          return;
+        }
+        sessionStorage.setItem("awsLabSession", JSON.stringify({ username, signedInAt: Date.now() }));
+        location.href = "/console/home";
+      });
+    </script>
+  </body>
+</html>

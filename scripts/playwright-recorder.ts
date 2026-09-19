@@ -56,6 +56,11 @@ export class AwsConsoleVisualRecorder {
     this.page.setDefaultTimeout(30_000);
   }
 
+  getPage(): Page {
+    if (!this.page) throw new Error("Recorder is not initialized.");
+    return this.page;
+  }
+
   private async maskSensitiveData(): Promise<void> {
     await this.page.evaluate(() => {
       const accountIdRegex = /\d{4}-\d{4}-\d{4}|\d{12}/g;

@@ -63,4 +63,28 @@ th { color: var(--muted); font-weight: 600; }
 .metric { height: 220px; display: flex; align-items: flex-end; gap: 10px; padding: 12px 8px 0; }
 .bar { width: 28px; background: linear-gradient(#59a9ff, #1f5f9a); border-radius: 4px 4px 0 0; }
 .terminal { background: #0b1220; min-height: 280px; }
-.navcrumbs { color: var(--muted); font-size: 12px; margin-bottom: 18px; }
+.signin-wrap {
+  min-height: 1080px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #161d26 0%, #0f1b2a 40%);
+}
+.signin-card {
+  width: 420px;
+  background: #fff;
+  color: #16191f;
+  border-radius: 8px;
+  padding: 28px 28px 32px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+}
+.signin-card h1 { color: #16191f; font-size: 22px; margin-bottom: 6px; }
+.signin-card .lead { color: #545b64; }
+.signin-card label { color: #545b64; }
+.signin-card .field {
+  background: #fff;
+  border: 1px solid #aab7b8;
+  color: #16191f;
+}
+.signin-card input.field { font-size: 15px; }
+.radio-row { display: flex; gap: 16px; margin: 12px 0 18px; font-size: 14px; }
+.error { color: #d13212; font-size: 13px; min-height: 18px; }

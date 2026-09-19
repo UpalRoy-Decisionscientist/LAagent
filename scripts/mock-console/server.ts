@@ -12,6 +12,12 @@ const MIME: Record<string, string> = {
 };
 
 const STATIC_ROUTES: Record<string, string> = {
+  "/": "signin.html",
+  "/signin": "signin.html",
+  "/console/home": "console-home.html",
+  "/lambda/create": "lambda-create.html",
+  "/lambda/success": "lambda-success.html",
+  "/lambda/logs": "lambda-logs.html",
   "/iam": "iam.html",
   "/iam/success": "iam-success.html",
   "/vpc": "vpc.html",

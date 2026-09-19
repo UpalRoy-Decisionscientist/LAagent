@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>CloudWatch log group | Lambda</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="dot">IAM</div>
+        <div class="dot">λ</div>
+        <div class="dot">S3</div>
+        <div class="dot active">CW</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="brand">AWS <span>CloudWatch</span></div>
+          <div class="account">academy-operator @ 1234-5678-9012 · us-east-1</div>
+        </header>
+        <div class="content">
+          <div class="navcrumbs">CloudWatch &gt; Log groups &gt; /aws/lambda/enterprise-image-processor</div>
+          <div class="card" data-capture="lambda-logs">
+            <h1>Log events</h1>
+            <p class="lead">Uday Module 08 verification: INIT and INVOKE appear without secrets.</p>
+            <pre class="terminal">START RequestId: a1b2c3d4-5678-90ab-cdef-example
+[INFO] Request ID: a1b2c3d4-5678-90ab-cdef-example
+[INFO] Function: enterprise-image-processor
+[INFO] Memory: 128 MB
+END RequestId: a1b2c3d4-5678-90ab-cdef-example
+REPORT Duration: 18.44 ms  Billed Duration: 19 ms  Memory Size: 128 MB  Max Memory Used: 42 MB</pre>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      if (!sessionStorage.getItem("awsLabSession")) location.replace("/signin");
+    </script>
+  </body>
+</html>
